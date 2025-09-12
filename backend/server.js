@@ -12,6 +12,7 @@ const panicRoutes = require('./routes/panic');
 const qrRoutes = require('./routes/qr');
 const geoRoutes = require('./routes/geo');
 const touristRoutes = require('./routes/tourists');
+const devRoutes = require('./routes/dev');
 
 // Import database connection
 const db = require('./db');
@@ -72,6 +73,12 @@ app.use('/api/panic', panicRoutes);
 app.use('/api/qr', qrRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/tourists', touristRoutes);
+
+// Mount development-only routes only when explicitly enabled in development
+// To enable: set NODE_ENV=development and ENABLE_DEV_ROUTES=true
+if ((process.env.NODE_ENV || 'development') === 'development' && process.env.ENABLE_DEV_ROUTES === 'true') {
+  app.use('/api/dev', devRoutes);
+}
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
