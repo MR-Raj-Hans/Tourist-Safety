@@ -16,7 +16,7 @@ import PoliceDashboard from './pages/PoliceDashboard';
 
 // Feature Components
 import EmergencyAlerts from './components/EmergencyAlerts';
-import LocationTracking from './components/LocationTracking';
+import StableLocationTracking from './components/StableLocationTracking';
 import QRIdentification from './components/QRIdentification';
 import AIRiskAssessment from './components/AIRiskAssessment';
 import MultiLanguageSupport from './components/MultiLanguageSupport';
@@ -305,7 +305,7 @@ function App() {
             path="/tracking" 
             element={
               <ProtectedRoute>
-                <LocationTracking />
+                <StableLocationTracking />
               </ProtectedRoute>
             } 
           />
