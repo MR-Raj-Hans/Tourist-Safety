@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMenu, FiX, FiUser, FiLogOut, FiGlobe, FiShield, FiMapPin, FiAlertTriangle, FiBrain, FiMessageCircle, FiBarChart3 } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiLogOut, FiGlobe, FiShield, FiMapPin, FiAlertTriangle, FiCpu, FiMessageCircle, FiBarChart2 } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { clearAuth, getUserData } from '../services/api';
@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     clearAuth();
-    navigate('/login');
+    navigate('/login-selection');
   };
 
   const toggleMenu = () => {
@@ -78,14 +78,14 @@ const Navbar = () => {
                         to="/analytics"
                         className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                       >
-                        <FiBarChart3 className="w-4 h-4 mr-1" />
+                        <FiBarChart2 className="w-4 h-4 mr-1" />
                         {t('navbar.analytics', 'Analytics')}
                       </Link>
                       <Link
                         to="/ai-risk"
                         className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                       >
-                        <FiBrain className="w-4 h-4 mr-1" />
+                        <FiCpu className="w-4 h-4 mr-1" />
                         {t('navbar.aiRisk', 'AI Risk')}
                       </Link>
                     </>
@@ -151,7 +151,7 @@ const Navbar = () => {
               /* Login/Register Links */
               <div className="flex space-x-2">
                 <Link
-                  to="/login"
+                  to="/login-selection"
                   className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   {t('navbar.login', 'Login')}
@@ -237,7 +237,7 @@ const Navbar = () => {
                       className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
-                      <FiBarChart3 className="w-4 h-4 mr-2" />
+                      <FiBarChart2 className="w-4 h-4 mr-2" />
                       {t('navbar.analytics', 'Analytics')}
                     </Link>
                     <Link
@@ -245,7 +245,7 @@ const Navbar = () => {
                       className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
-                      <FiBrain className="w-4 h-4 mr-2" />
+                      <FiCpu className="w-4 h-4 mr-2" />
                       {t('navbar.aiRisk', 'AI Risk')}
                     </Link>
                     <Link
@@ -269,7 +269,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <Link
-                    to="/login"
+                    to="/login-selection"
                     className="text-white hover:bg-primary-800 block px-3 py-2 rounded-md text-base font-medium"
                     onClick={() => setIsOpen(false)}
                   >

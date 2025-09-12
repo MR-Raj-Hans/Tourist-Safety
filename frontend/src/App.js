@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Navbar';
 
 // Pages
+import LoginSelection from './pages/LoginSelection';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TouristDashboard from './pages/TouristDashboard';
@@ -30,11 +31,11 @@ const ProtectedRoute = ({ children, requiredUserType = null }) => {
   const token = getAuthToken();
 
   if (!userData || !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login-selection" replace />;
   }
 
   if (requiredUserType && userData.userType !== requiredUserType) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login-selection" replace />;
   }
 
   return children;
@@ -80,7 +81,7 @@ const Home = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/login"
+              href="/login-selection"
               className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
               Get Started
@@ -243,7 +244,23 @@ function App() {
             path="/" 
             element={
               <PublicRoute>
+                <LoginSelection />
+              </PublicRoute>
+            } 
+          />
+          <Route 
+            path="/home" 
+            element={
+              <PublicRoute>
                 <Home />
+              </PublicRoute>
+            } 
+          />
+          <Route 
+            path="/login-selection" 
+            element={
+              <PublicRoute>
+                <LoginSelection />
               </PublicRoute>
             } 
           />

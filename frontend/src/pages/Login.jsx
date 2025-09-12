@@ -1,21 +1,46 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiUser, FiEye, FiEyeOff } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiArrowLeft } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import { authAPI, setAuthToken, setUserData } from '../services/api';
 import socketService from '../services/socket';
 import { toast } from 'react-toastify';
 
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const loginType = searchParams.get('type') || 'user';
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    userType: 'tourist'
+    userType: loginType === 'admin' ? 'police' : 'tourist'
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Update userType when loginType changes
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      userType: loginType === 'admin' ? 'police' : 'tourist'
+    }));
+  }, [loginType]);
+
+  const getPageTitle = () => {
+    if (loginType === 'admin') {
+      return t('login.adminTitle', 'Admin Login');
+    }
+    return t('login.userTitle', 'Tourist Login');
+  };
+
+  const getPageSubtitle = () => {
+    if (loginType === 'admin') {
+      return t('login.adminSubtitle', 'Access administrative dashboard');
+    }
+    return t('login.userSubtitle', 'Stay safe with real-time monitoring');
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -63,11 +88,20 @@ const Login = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate('/login-selection')}
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          >
+            <FiArrowLeft className="w-4 h-4 mr-2" />
+            Back to selection
+          </button>
+          
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            {t('login.title', 'Sign in to your account')}
+            {getPageTitle()}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {t('login.subtitle', 'Stay safe with real-time monitoring')}
+            {getPageSubtitle()}
           </p>
         </div>
       </div>
@@ -75,36 +109,23 @@ const Login = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* User Type Selection */}
+            {/* User Type Display - Read Only */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                {t('login.userType', 'I am a:')}
+                {t('login.loginAs', 'Logging in as:')}
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, userType: 'tourist' })}
-                  className={`p-3 text-sm font-medium rounded-lg border transition-all ${
-                    formData.userType === 'tourist'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <FiUser className="h-5 w-5 mx-auto mb-1" />
-                  {t('login.tourist', 'Tourist')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, userType: 'police' })}
-                  className={`p-3 text-sm font-medium rounded-lg border transition-all ${
-                    formData.userType === 'police'
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <FiUser className="h-5 w-5 mx-auto mb-1" />
-                  {t('login.police', 'Police Officer')}
-                </button>
+              <div className={`p-3 text-sm font-medium rounded-lg border ${
+                loginType === 'admin'
+                  ? 'border-purple-500 bg-purple-50 text-purple-700'
+                  : 'border-blue-500 bg-blue-50 text-blue-700'
+              }`}>
+                <div className="flex items-center justify-center">
+                  <FiUser className="h-5 w-5 mr-2" />
+                  {loginType === 'admin' 
+                    ? t('login.admin', 'Administrator') 
+                    : t('login.tourist', 'Tourist')
+                  }
+                </div>
               </div>
             </div>
 
@@ -189,20 +210,23 @@ const Login = () => {
             </div>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-800 mb-2">
-              {t('login.demo.title', 'Demo Credentials:')}
-            </h4>
-            <div className="text-xs text-gray-600 space-y-1">
-              <div>
-                <strong>{t('login.demo.tourist', 'Tourist')}:</strong> tourist@demo.com / password123
-              </div>
-              <div>
-                <strong>{t('login.demo.police', 'Police')}:</strong> officer@demo.com / password123
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <h4 className="text-sm font-medium text-gray-800 mb-2">
+                {t('login.demo.title', 'Demo Credentials:')}
+              </h4>
+              <div className="text-xs text-gray-600 space-y-1">
+                {loginType === 'admin' ? (
+                  <div>
+                    <strong>{t('login.demo.admin', 'Admin')}:</strong> admin@demo.com / admin123
+                  </div>
+                ) : (
+                  <div>
+                    <strong>{t('login.demo.tourist', 'Tourist')}:</strong> tourist@demo.com / password123
+                  </div>
+                )}
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>

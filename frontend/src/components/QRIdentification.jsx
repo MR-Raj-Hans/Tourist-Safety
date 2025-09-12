@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiMapPin, FiPhone, FiMail, FiCalendar, FiFlag, FiCheck, FiCamera, FiRefreshCw } from 'react-icons/fi';
+import { FiUser, FiMapPin, FiPhone, FiMail, FiCalendar, FiFlag, FiCheck, FiCamera, FiRefreshCw, FiShield, FiStar, FiClock, FiGlobe } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import QRCode from 'qrcode';
 
@@ -9,8 +9,10 @@ const QRIdentification = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [glowIntensity, setGlowIntensity] = useState(0);
+  const [verificationStep, setVerificationStep] = useState(0);
 
-  // Mock tourist data
+  // Enhanced tourist data
   const touristData = {
     id: 'TST-2025-001',
     name: 'John Smith',
@@ -21,281 +23,422 @@ const QRIdentification = () => {
     checkIn: '2025-09-10',
     checkOut: '2025-09-20',
     hotel: 'Grand Plaza Hotel',
-    emergencyContact: 'Jane Smith (+1-555-0456)',
+    emergencyContact: 'Jane Smith (+1-555-0124)',
+    purpose: 'Tourism',
+    status: 'Active',
+    verificationLevel: 'Verified',
     riskLevel: 'Low',
-    location: 'Times Square, NY'
+    avatar: null,
+    lastUpdate: new Date().toISOString()
   };
 
-  // Generate QR Code
+  // Generate QR code with enhanced data
   useEffect(() => {
     const generateQR = async () => {
       try {
         const qrData = JSON.stringify({
-          touristId: touristData.id,
-          name: touristData.name,
-          nationality: touristData.nationality,
-          phone: touristData.phone,
-          location: touristData.location,
-          timestamp: new Date().toISOString()
+          ...touristData,
+          timestamp: Date.now(),
+          securityHash: 'abc123def456' // In real app, this would be a proper hash
         });
         
-        const qrUrl = await QRCode.toDataURL(qrData, {
-          width: 256,
+        const url = await QRCode.toDataURL(qrData, {
+          width: 300,
           margin: 2,
           color: {
-            dark: '#10B981',
-            light: '#FFFFFF'
+            dark: '#10b981', // Green color for the QR code
+            light: '#ffffff'
           }
         });
-        setQrCodeUrl(qrUrl);
+        setQrCodeUrl(url);
       } catch (error) {
         console.error('Error generating QR code:', error);
       }
     };
 
     generateQR();
-  }, [touristData]);
+  }, []);
 
-  const handleVerification = () => {
-    setIsScanning(true);
-    setTimeout(() => {
-      setIsScanning(false);
-      setShowVerification(true);
-      setTimeout(() => {
-        setIsVerified(true);
-      }, 500);
-    }, 2000);
+  // Glow animation effect
+  useEffect(() => {
+    const glowInterval = setInterval(() => {
+      setGlowIntensity(prev => (prev + 1) % 100);
+    }, 80);
+
+    return () => clearInterval(glowInterval);
+  }, []);
+
+  // Verification animation sequence
+  const startVerification = () => {
+    setShowVerification(true);
+    setVerificationStep(0);
+    
+    const steps = [
+      { step: 1, message: 'Scanning QR Code...', duration: 1500 },
+      { step: 2, message: 'Validating Identity...', duration: 1200 },
+      { step: 3, message: 'Checking Database...', duration: 1000 },
+      { step: 4, message: 'Verification Complete!', duration: 800 }
+    ];
+
+    let currentStep = 0;
+    const processStep = () => {
+      if (currentStep < steps.length) {
+        setVerificationStep(currentStep + 1);
+        setTimeout(() => {
+          currentStep++;
+          if (currentStep < steps.length) {
+            processStep();
+          } else {
+            setIsVerified(true);
+            setTimeout(() => {
+              setShowVerification(false);
+            }, 2000);
+          }
+        }, steps[currentStep].duration);
+      }
+    };
+
+    processStep();
   };
 
-  const resetVerification = () => {
-    setIsVerified(false);
-    setShowVerification(false);
+  const regenerateQR = async () => {
+    setIsScanning(true);
+    // Simulate regeneration delay
+    setTimeout(async () => {
+      try {
+        const qrData = JSON.stringify({
+          ...touristData,
+          timestamp: Date.now(),
+          securityHash: Math.random().toString(36).substr(2, 9)
+        });
+        
+        const url = await QRCode.toDataURL(qrData, {
+          width: 300,
+          margin: 2,
+          color: {
+            dark: '#10b981',
+            light: '#ffffff'
+          }
+        });
+        setQrCodeUrl(url);
+        setIsScanning(false);
+      } catch (error) {
+        console.error('Error regenerating QR code:', error);
+        setIsScanning(false);
+      }
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-gray-900 to-teal-900 p-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            {t('Digital Tourist ID')}
-          </h1>
-          <p className="text-emerald-200">
-            {t('Official identification for safe tourism')}
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* QR Code Section */}
-          <div className="relative">
-            {/* Glassmorphism Container */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 shadow-2xl">
-              {/* QR Code Display */}
-              <div className="text-center">
-                <div className="relative inline-block mb-6">
-                  {/* Glowing Border */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-green-500 to-teal-400 rounded-2xl blur-md opacity-70 animate-pulse"></div>
-                  
-                  {/* QR Code Container */}
-                  <div className="relative bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-white/30">
-                    {qrCodeUrl ? (
-                      <img 
-                        src={qrCodeUrl} 
-                        alt="Tourist QR Code" 
-                        className="w-64 h-64 mx-auto rounded-lg shadow-lg"
-                      />
-                    ) : (
-                      <div className="w-64 h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* ID Badge */}
-                <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-xl p-4 mb-6">
-                  <div className="flex items-center justify-center space-x-3">
-                    <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
-                    <span className="text-emerald-300 font-mono text-lg">
-                      ID: {touristData.id}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-center space-x-4">
-                  <button 
-                    onClick={handleVerification}
-                    disabled={isScanning}
-                    className="bg-emerald-600/80 hover:bg-emerald-600 disabled:opacity-50 text-white px-6 py-3 rounded-xl backdrop-blur-sm border border-emerald-500/30 transition-all duration-300 flex items-center space-x-2"
-                  >
-                    {isScanning ? (
-                      <>
-                        <FiRefreshCw className="w-5 h-5 animate-spin" />
-                        <span>{t('Scanning...')}</span>
-                      </>
-                    ) : (
-                      <>
-                        <FiCamera className="w-5 h-5" />
-                        <span>{t('Verify ID')}</span>
-                      </>
-                    )}
-                  </button>
-                  
-                  <button 
-                    onClick={resetVerification}
-                    className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl backdrop-blur-sm border border-white/20 transition-all duration-300"
-                  >
-                    {t('Reset')}
-                  </button>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50">
+      {/* Elegant Header */}
+      <div className="bg-white/80 backdrop-blur-xl border-b border-green-200/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-500/10 rounded-xl">
+                <FiShield className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">Digital Tourist ID</h1>
+                <p className="text-green-600 text-sm">Secure • Verified • Official</p>
               </div>
             </div>
-
-            {/* Verification Overlay */}
-            {showVerification && (
-              <div className="absolute inset-0 bg-emerald-900/90 backdrop-blur-md rounded-3xl flex items-center justify-center z-10">
-                <div className="text-center text-white">
-                  <div className={`w-24 h-24 mx-auto mb-4 rounded-full border-4 flex items-center justify-center transition-all duration-500 ${
-                    isVerified 
-                      ? 'border-emerald-400 bg-emerald-500/20' 
-                      : 'border-yellow-400 bg-yellow-500/20'
-                  }`}>
-                    {isVerified ? (
-                      <FiCheck className="w-12 h-12 text-emerald-400 animate-bounce" />
-                    ) : (
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
-                    )}
-                  </div>
-                  <h3 className="text-2xl font-bold mb-2">
-                    {isVerified ? t('Verification Successful') : t('Verifying...')}
-                  </h3>
-                  <p className="text-emerald-200">
-                    {isVerified 
-                      ? t('Identity confirmed and registered') 
-                      : t('Please wait while we verify your identity')
-                    }
-                  </p>
-                </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-green-600 text-sm font-medium">Active Status</span>
               </div>
-            )}
-          </div>
-
-          {/* Tourist Information Section */}
-          <div className="space-y-6">
-            {/* Personal Information Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                <FiUser className="w-6 h-6 text-emerald-400" />
-                <span>{t('Personal Information')}</span>
-                {isVerified && (
-                  <div className="ml-auto">
-                    <div className="flex items-center space-x-2 bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-sm">
-                      <FiCheck className="w-4 h-4" />
-                      <span>{t('Verified')}</span>
-                    </div>
-                  </div>
-                )}
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <FiUser className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-200 text-sm">{t('Full Name')}</span>
-                  </div>
-                  <p className="text-white font-medium">{touristData.name}</p>
-                </div>
-
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <FiFlag className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-200 text-sm">{t('Nationality')}</span>
-                  </div>
-                  <p className="text-white font-medium">{touristData.nationality}</p>
-                </div>
-
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <FiPhone className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-200 text-sm">{t('Phone')}</span>
-                  </div>
-                  <p className="text-white font-medium">{touristData.phone}</p>
-                </div>
-
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <FiMail className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-200 text-sm">{t('Email')}</span>
-                  </div>
-                  <p className="text-white font-medium">{touristData.email}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Visit Information Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                <FiCalendar className="w-6 h-6 text-teal-400" />
-                <span>{t('Visit Information')}</span>
-              </h2>
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
-                  <span className="text-teal-200">{t('Check-in Date')}</span>
-                  <span className="text-white font-medium">{touristData.checkIn}</span>
-                </div>
-                
-                <div className="flex justify-between items-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
-                  <span className="text-teal-200">{t('Check-out Date')}</span>
-                  <span className="text-white font-medium">{touristData.checkOut}</span>
-                </div>
-
-                <div className="flex justify-between items-center p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
-                  <span className="text-teal-200">{t('Accommodation')}</span>
-                  <span className="text-white font-medium">{touristData.hotel}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <FiMapPin className="w-4 h-4 text-teal-400" />
-                    <span className="text-teal-200">{t('Current Location')}</span>
-                  </div>
-                  <span className="text-white font-medium">{touristData.location}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Security Status Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                <div className="w-6 h-6 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full flex items-center justify-center">
-                  <FiCheck className="w-4 h-4 text-white" />
-                </div>
-                <span>{t('Security Status')}</span>
-              </h2>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-emerald-500/20 border border-emerald-400/30 rounded-xl">
-                  <span className="text-emerald-200">{t('Risk Level')}</span>
-                  <span className="text-emerald-400 font-bold">{touristData.riskLevel}</span>
-                </div>
-                
-                <div className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                  <div className="text-gray-300 text-sm mb-1">{t('Emergency Contact')}</div>
-                  <div className="text-white font-medium">{touristData.emergencyContact}</div>
-                </div>
+              <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                isVerified 
+                  ? 'bg-green-100 text-green-700 border border-green-200' 
+                  : 'bg-gray-100 text-gray-600 border border-gray-200'
+              }`}>
+                {isVerified ? 'VERIFIED' : 'PENDING'}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Verification Badge */}
-      {isVerified && (
-        <div className="fixed bottom-8 right-8 z-50">
-          <div className="bg-emerald-500 text-white p-4 rounded-full shadow-2xl animate-bounce">
-            <FiCheck className="w-8 h-8" />
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* QR Code Section - Center Focus */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              {/* QR Code Card with Glassmorphism */}
+              <div className="bg-white/60 backdrop-blur-xl rounded-3xl border border-white/50 shadow-2xl p-8 text-center">
+                <h2 className="text-xl font-bold text-gray-800 mb-6">
+                  Digital Identity Code
+                </h2>
+                
+                {/* QR Code Container */}
+                <div className="relative mx-auto w-64 h-64 mb-6">
+                  {/* Glowing Border */}
+                  <div 
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400 to-emerald-500 opacity-75"
+                    style={{
+                      filter: `blur(${2 + Math.sin(glowIntensity * 0.1) * 3}px)`,
+                      transform: `scale(${1 + Math.sin(glowIntensity * 0.05) * 0.02})`
+                    }}
+                  ></div>
+                  
+                  {/* QR Code */}
+                  <div className="relative bg-white rounded-2xl p-4 shadow-lg">
+                    {qrCodeUrl && !isScanning ? (
+                      <img 
+                        src={qrCodeUrl} 
+                        alt="Tourist QR Code" 
+                        className="w-full h-full object-contain rounded-xl"
+                        style={{
+                          filter: `drop-shadow(0 0 ${5 + Math.sin(glowIntensity * 0.1) * 5}px rgba(16, 185, 129, 0.5))`
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-xl">
+                        <div className="animate-spin">
+                          <FiRefreshCw className="w-8 h-8 text-green-500" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Verification Checkmark */}
+                  {isVerified && (
+                    <div className="absolute -top-3 -right-3 bg-green-500 rounded-full p-2 shadow-lg animate-bounce">
+                      <FiCheck className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </div>
+                
+                {/* ID Number */}
+                <div className="bg-green-50/80 backdrop-blur-md rounded-xl p-4 mb-6">
+                  <p className="text-sm text-green-600 font-medium mb-1">Tourist ID</p>
+                  <p className="text-lg font-bold text-green-800 font-mono">{touristData.id}</p>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <button
+                    onClick={startVerification}
+                    className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    <div className="flex items-center justify-center space-x-2">
+                      <FiCamera className="w-5 h-5" />
+                      <span>Verify Identity</span>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={regenerateQR}
+                    className="w-full py-3 bg-white/80 hover:bg-white border border-green-200 text-green-700 font-medium rounded-xl transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-center space-x-2">
+                      <FiRefreshCw className="w-4 h-4" />
+                      <span>Regenerate Code</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Profile Information Cards */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Personal Information */}
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center">
+                <FiUser className="w-5 h-5 text-green-600 mr-3" />
+                Personal Information
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium">Full Name</label>
+                    <p className="text-lg font-semibold text-gray-800">{touristData.name}</p>
+                  </div>
+                  
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium flex items-center">
+                      <FiFlag className="w-4 h-4 mr-1" />
+                      Nationality
+                    </label>
+                    <p className="text-lg font-semibold text-gray-800">{touristData.nationality}</p>
+                  </div>
+                  
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium">Passport Number</label>
+                    <p className="text-lg font-semibold text-gray-800 font-mono">{touristData.passport}</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium flex items-center">
+                      <FiPhone className="w-4 h-4 mr-1" />
+                      Phone Number
+                    </label>
+                    <p className="text-lg font-semibold text-gray-800">{touristData.phone}</p>
+                  </div>
+                  
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium flex items-center">
+                      <FiMail className="w-4 h-4 mr-1" />
+                      Email Address
+                    </label>
+                    <p className="text-lg font-semibold text-gray-800">{touristData.email}</p>
+                  </div>
+                  
+                  <div className="bg-green-50/50 rounded-xl p-4">
+                    <label className="text-sm text-green-600 font-medium">Purpose of Visit</label>
+                    <p className="text-lg font-semibold text-gray-800">{touristData.purpose}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Travel Details */}
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center">
+                <FiCalendar className="w-5 h-5 text-green-600 mr-3" />
+                Travel Details
+              </h3>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-green-50/50 rounded-xl p-4">
+                  <label className="text-sm text-green-600 font-medium">Check-in Date</label>
+                  <p className="text-lg font-semibold text-gray-800">{touristData.checkIn}</p>
+                </div>
+                
+                <div className="bg-green-50/50 rounded-xl p-4">
+                  <label className="text-sm text-green-600 font-medium">Check-out Date</label>
+                  <p className="text-lg font-semibold text-gray-800">{touristData.checkOut}</p>
+                </div>
+                
+                <div className="bg-green-50/50 rounded-xl p-4">
+                  <label className="text-sm text-green-600 font-medium flex items-center">
+                    <FiMapPin className="w-4 h-4 mr-1" />
+                    Accommodation
+                  </label>
+                  <p className="text-lg font-semibold text-gray-800">{touristData.hotel}</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Security & Status */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl p-6">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                  <FiShield className="w-5 h-5 text-green-600 mr-3" />
+                  Security Status
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Verification Level</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        {[1, 2, 3].map(star => (
+                          <FiStar key={star} className="w-4 h-4 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                      <span className="text-green-600 font-semibold">{touristData.verificationLevel}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Risk Assessment</span>
+                    <span className="text-green-600 font-semibold">{touristData.riskLevel}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Account Status</span>
+                    <span className="text-green-600 font-semibold">{touristData.status}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl p-6">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                  <FiClock className="w-5 h-5 text-green-600 mr-3" />
+                  Recent Activity
+                </h3>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-sm text-gray-600">QR Code accessed</span>
+                    <span className="text-xs text-gray-400 ml-auto">Just now</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-sm text-gray-600">Location updated</span>
+                    <span className="text-xs text-gray-400 ml-auto">5 min ago</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    <span className="text-sm text-gray-600">Profile verified</span>
+                    <span className="text-xs text-gray-400 ml-auto">1 hour ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Verification Modal */}
+      {showVerification && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl border border-white/50 shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {verificationStep < 4 ? (
+                    <div className="animate-spin">
+                      <FiRefreshCw className="w-8 h-8 text-green-600" />
+                    </div>
+                  ) : (
+                    <FiCheck className="w-8 h-8 text-green-600" />
+                  )}
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  Identity Verification
+                </h3>
+                
+                <p className="text-gray-600">
+                  {verificationStep === 1 && 'Scanning QR Code...'}
+                  {verificationStep === 2 && 'Validating Identity...'}
+                  {verificationStep === 3 && 'Checking Database...'}
+                  {verificationStep === 4 && 'Verification Complete!'}
+                </p>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div 
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${(verificationStep / 4) * 100}%` }}
+                ></div>
+              </div>
+              
+              {verificationStep === 4 && (
+                <div className="bg-green-50 rounded-xl p-4">
+                  <p className="text-green-800 font-semibold">
+                    ✓ Identity successfully verified!
+                  </p>
+                  <p className="text-green-600 text-sm mt-1">
+                    All security checks passed.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
