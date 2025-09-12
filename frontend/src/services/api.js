@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Default to the backend running on port 5001 in local development (backend started on 5001)
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Create axios instance
 const api = axios.create({
@@ -58,6 +59,24 @@ export const panicAPI = {
   updateAlertStatus: (alertId, status) => api.put(`/panic/${alertId}/status`, { status }),
   getAlertDetails: (alertId) => api.get(`/panic/${alertId}`),
   cancelAlert: (alertId) => api.delete(`/panic/${alertId}`),
+};
+
+// Dev-only helper: if unauthenticated and in development, post to /api/dev/insert_alert
+export const devCreateAlert = async (alertData) => {
+  if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_USE_DEV_DB !== 'false') {
+    try {
+      const resp = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5001') + '/api/dev/insert_alert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(alertData),
+      });
+      return await resp.json();
+    } catch (err) {
+      console.error('Dev create alert failed', err);
+      throw err;
+    }
+  }
+  throw new Error('Dev create alert not available');
 };
 
 // QR API
@@ -145,7 +164,8 @@ export const checkLocation = geoAPI.checkLocation;
 
 export const getTourists = async () => {
   try {
-    const response = await api.get('/api/tourists');
+    const response = await api.get('/tourists');
+    // response.data is expected to be { success: true, data: [...] }
     return response.data;
   } catch (error) {
     console.error('Get tourists error:', error);

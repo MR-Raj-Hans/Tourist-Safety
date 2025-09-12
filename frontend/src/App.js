@@ -11,6 +11,7 @@ import LoginSelection from './pages/LoginSelection';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TouristDashboard from './pages/TouristDashboard';
+import ModernDashboard from './pages/ModernDashboard';
 import PoliceDashboard from './pages/PoliceDashboard';
 
 // Feature Components
@@ -286,7 +287,7 @@ function App() {
             path="/dashboard" 
             element={
               <ProtectedRoute requiredUserType="tourist">
-                <TouristDashboard />
+                <ModernDashboard />
               </ProtectedRoute>
             } 
           />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiAlertTriangle, FiPhone, FiMapPin, FiClock } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
-import { panicAPI } from '../services/api';
+import { panicAPI, devCreateAlert } from '../services/api';
 import socketService from '../services/socket';
 import { toast } from 'react-toastify';
 
@@ -78,11 +78,24 @@ const PanicButton = ({ userLocation }) => {
         description: `${alertTypes.find(type => type.value === alertType)?.label} triggered by user`,
       };
 
-      const response = await panicAPI.createAlert(alertData);
-      
-      // Send real-time alert via socket
-      socketService.sendPanicAlert(response.data.data);
-      
+      let response;
+      try {
+        response = await panicAPI.createAlert(alertData);
+      } catch (err) {
+        // If unauthenticated or in development, fallback to devCreateAlert
+        if (process.env.NODE_ENV === 'development') {
+          const devResp = await devCreateAlert({ tourist_id: 1, ...alertData });
+          response = { data: { data: devResp.data } };
+        } else {
+          throw err;
+        }
+      }
+
+      // Send real-time alert via socket (if payload available)
+      if (response?.data?.data) {
+        socketService.sendPanicAlert(response.data.data);
+      }
+
       toast.success(t('panic.success', 'Emergency alert sent successfully!'));
       setShowConfirmation(true);
       

@@ -12,18 +12,12 @@ const MultiLanguageSupport = () => {
   const [isListening, setIsListening] = useState(false);
   const [connectionPulse, setConnectionPulse] = useState(0);
 
+  // Reduced language set: keep a concise, useful subset
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English', popularity: 95 },
     { code: 'es', name: 'Spanish', flag: '🇪🇸', nativeName: 'Español', popularity: 85 },
     { code: 'fr', name: 'French', flag: '🇫🇷', nativeName: 'Français', popularity: 75 },
-    { code: 'de', name: 'German', flag: '🇩🇪', nativeName: 'Deutsch', popularity: 70 },
-    { code: 'it', name: 'Italian', flag: '🇮🇹', nativeName: 'Italiano', popularity: 65 },
-    { code: 'pt', name: 'Portuguese', flag: '🇵🇹', nativeName: 'Português', popularity: 60 },
-    { code: 'ru', name: 'Russian', flag: '🇷🇺', nativeName: 'Русский', popularity: 55 },
-    { code: 'ja', name: 'Japanese', flag: '🇯🇵', nativeName: '日本語', popularity: 50 },
-    { code: 'ko', name: 'Korean', flag: '🇰🇷', nativeName: '한국어', popularity: 45 },
     { code: 'zh', name: 'Chinese', flag: '🇨🇳', nativeName: '中文', popularity: 90 },
-    { code: 'ar', name: 'Arabic', flag: '🇸🇦', nativeName: 'العربية', popularity: 40 },
     { code: 'hi', name: 'Hindi', flag: '🇮🇳', nativeName: 'हिन्दी', popularity: 80 }
   ];
 

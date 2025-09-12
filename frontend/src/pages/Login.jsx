@@ -84,6 +84,15 @@ const Login = () => {
     }
   };
 
+  const handleAutoLogin = () => {
+    // Set demo auth in localStorage using keys used by services/api.js
+    localStorage.setItem('authToken', 'demo-token');
+    localStorage.setItem('userData', JSON.stringify({ userType: formData.userType, email: formData.userType === 'tourist' ? 'tourist@demo.com' : 'admin@demo.com' }));
+    socketService.connect({ userType: formData.userType });
+    navigate(formData.userType === 'tourist' ? '/dashboard' : '/police-dashboard');
+    toast.success('Auto logged in (demo)');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -225,6 +234,14 @@ const Login = () => {
                     <strong>{t('login.demo.tourist', 'Tourist')}:</strong> tourist@demo.com / password123
                   </div>
                 )}
+              </div>
+              <div className="mt-3">
+                <button
+                  onClick={handleAutoLogin}
+                  className="w-full px-4 py-2 rounded-md bg-primary-600 text-white text-sm font-medium hover:bg-primary-700"
+                >
+                  Auto Login (Demo)
+                </button>
               </div>
             </div>
         </div>
