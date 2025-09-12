@@ -12,6 +12,14 @@ import Register from './pages/Register';
 import TouristDashboard from './pages/TouristDashboard';
 import PoliceDashboard from './pages/PoliceDashboard';
 
+// Feature Components
+import EmergencyAlerts from './components/EmergencyAlerts';
+import LocationTracking from './components/LocationTracking';
+import QRIdentification from './components/QRIdentification';
+import AIRiskAssessment from './components/AIRiskAssessment';
+import MultiLanguageSupport from './components/MultiLanguageSupport';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+
 // Services
 import { getUserData, getAuthToken } from './services/api';
 import socketService from './services/socket';
@@ -262,6 +270,56 @@ function App() {
             element={
               <ProtectedRoute requiredUserType="tourist">
                 <TouristDashboard />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Feature Routes - Available to all authenticated users */}
+          <Route 
+            path="/emergency" 
+            element={
+              <ProtectedRoute>
+                <EmergencyAlerts />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tracking" 
+            element={
+              <ProtectedRoute>
+                <LocationTracking />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/qr-id" 
+            element={
+              <ProtectedRoute>
+                <QRIdentification />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/ai-risk" 
+            element={
+              <ProtectedRoute>
+                <AIRiskAssessment />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/translate" 
+            element={
+              <ProtectedRoute>
+                <MultiLanguageSupport />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/analytics" 
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboard />
               </ProtectedRoute>
             } 
           />

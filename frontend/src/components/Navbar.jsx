@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMenu, FiX, FiUser, FiLogOut, FiGlobe, FiShield, FiMapPin } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiLogOut, FiGlobe, FiShield, FiMapPin, FiAlertTriangle, FiBrain, FiMessageCircle, FiBarChart3 } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { clearAuth, getUserData } from '../services/api';
@@ -53,16 +53,17 @@ const Navbar = () => {
                         {t('navbar.dashboard', 'Dashboard')}
                       </Link>
                       <Link
-                        to="/qr"
-                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        to="/emergency"
+                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                       >
-                        {t('navbar.qr', 'My QR')}
+                        <FiAlertTriangle className="w-4 h-4 mr-1" />
+                        {t('navbar.emergency', 'Emergency')}
                       </Link>
                       <Link
-                        to="/alerts"
+                        to="/qr-id"
                         className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                       >
-                        {t('navbar.alerts', 'My Alerts')}
+                        {t('navbar.qr', 'My QR ID')}
                       </Link>
                     </>
                   ) : (
@@ -74,19 +75,37 @@ const Navbar = () => {
                         {t('navbar.policeDashboard', 'Police Dashboard')}
                       </Link>
                       <Link
-                        to="/active-alerts"
-                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        to="/analytics"
+                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                       >
-                        {t('navbar.activeAlerts', 'Active Alerts')}
+                        <FiBarChart3 className="w-4 h-4 mr-1" />
+                        {t('navbar.analytics', 'Analytics')}
                       </Link>
                       <Link
-                        to="/geo-fences"
-                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        to="/ai-risk"
+                        className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                       >
-                        {t('navbar.geoFences', 'Geo-Fences')}
+                        <FiBrain className="w-4 h-4 mr-1" />
+                        {t('navbar.aiRisk', 'AI Risk')}
                       </Link>
                     </>
                   )}
+                  
+                  {/* Common features for all users */}
+                  <Link
+                    to="/tracking"
+                    className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                  >
+                    <FiMapPin className="w-4 h-4 mr-1" />
+                    {t('navbar.tracking', 'Tracking')}
+                  </Link>
+                  <Link
+                    to="/translate"
+                    className="text-white hover:bg-primary-700 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                  >
+                    <FiMessageCircle className="w-4 h-4 mr-1" />
+                    {t('navbar.translate', 'Translate')}
+                  </Link>
                 </div>
               </div>
             )}
@@ -173,18 +192,35 @@ const Navbar = () => {
                       {t('navbar.dashboard', 'Dashboard')}
                     </Link>
                     <Link
-                      to="/qr"
-                      className="text-white hover:bg-primary-800 block px-3 py-2 rounded-md text-base font-medium"
+                      to="/emergency"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
-                      {t('navbar.qr', 'My QR')}
+                      <FiAlertTriangle className="w-4 h-4 mr-2" />
+                      {t('navbar.emergency', 'Emergency')}
                     </Link>
                     <Link
-                      to="/alerts"
+                      to="/qr-id"
                       className="text-white hover:bg-primary-800 block px-3 py-2 rounded-md text-base font-medium"
                       onClick={() => setIsOpen(false)}
                     >
-                      {t('navbar.alerts', 'My Alerts')}
+                      {t('navbar.qr', 'My QR ID')}
+                    </Link>
+                    <Link
+                      to="/tracking"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FiMapPin className="w-4 h-4 mr-2" />
+                      {t('navbar.tracking', 'Tracking')}
+                    </Link>
+                    <Link
+                      to="/translate"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FiMessageCircle className="w-4 h-4 mr-2" />
+                      {t('navbar.translate', 'Translate')}
                     </Link>
                   </>
                 ) : (
@@ -197,18 +233,36 @@ const Navbar = () => {
                       {t('navbar.policeDashboard', 'Police Dashboard')}
                     </Link>
                     <Link
-                      to="/active-alerts"
-                      className="text-white hover:bg-primary-800 block px-3 py-2 rounded-md text-base font-medium"
+                      to="/analytics"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
-                      {t('navbar.activeAlerts', 'Active Alerts')}
+                      <FiBarChart3 className="w-4 h-4 mr-2" />
+                      {t('navbar.analytics', 'Analytics')}
                     </Link>
                     <Link
-                      to="/geo-fences"
-                      className="text-white hover:bg-primary-800 block px-3 py-2 rounded-md text-base font-medium"
+                      to="/ai-risk"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                       onClick={() => setIsOpen(false)}
                     >
-                      {t('navbar.geoFences', 'Geo-Fences')}
+                      <FiBrain className="w-4 h-4 mr-2" />
+                      {t('navbar.aiRisk', 'AI Risk')}
+                    </Link>
+                    <Link
+                      to="/tracking"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FiMapPin className="w-4 h-4 mr-2" />
+                      {t('navbar.tracking', 'Tracking')}
+                    </Link>
+                    <Link
+                      to="/translate"
+                      className="text-white hover:bg-primary-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FiMessageCircle className="w-4 h-4 mr-2" />
+                      {t('navbar.translate', 'Translate')}
                     </Link>
                   </>
                 )
