@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FiUser, FiMail, FiPhone, FiGlobe, FiShield, FiLock, FiEye, FiEyeOff, FiUserCheck } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { register } from '../services/api';
+import Navbar from '../components/Navbar';
 
 const Register = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,230 +64,305 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {t('create_account')}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t('or')}{' '}
-            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
-              {t('sign_in_existing')}
-            </Link>
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            {/* Name */}
-            <div>
-              <label htmlFor="name" className="sr-only">
-                {t('full_name')}
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('full_name')}
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="sr-only">
-                {t('email')}
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('email')}
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="sr-only">
-                {t('phone')}
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('phone')}
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Passport */}
-            <div>
-              <label htmlFor="passport" className="sr-only">
-                {t('passport_number')}
-              </label>
-              <input
-                id="passport"
-                name="passport"
-                type="text"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('passport_number')}
-                value={formData.passport}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Nationality */}
-            <div>
-              <label htmlFor="nationality" className="sr-only">
-                {t('nationality')}
-              </label>
-              <input
-                id="nationality"
-                name="nationality"
-                type="text"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('nationality')}
-                value={formData.nationality}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Emergency Contact */}
-            <div>
-              <label htmlFor="emergencyContact" className="sr-only">
-                {t('emergency_contact')}
-              </label>
-              <input
-                id="emergencyContact"
-                name="emergencyContact"
-                type="tel"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('emergency_contact')}
-                value={formData.emergencyContact}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="sr-only">
-                {t('password')}
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('password')}
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">
-                {t('confirm_password')}
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('confirm_password')}
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
+    <div className="min-h-screen bg-gradient-aurora relative overflow-hidden">
+      <Navbar />
+      
+      {/* Main Content */}
+      <div className="relative z-10 pt-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-3xl premium-glass-enhanced flex items-center justify-center shadow-lg">
+                <FiShield className="text-lg sm:text-xl premium-text-gold" />
+              </div>
+              <div className="ml-2 sm:ml-3">
+                <h1 className="text-xl sm:text-2xl font-bold premium-text-bold">
+                  Trāṇa (त्राण)
+                </h1>
+                <p className="text-xs sm:text-sm premium-text-secondary">Join Your Safety Guardian</p>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* User Type Selection */}
-          <div>
-            <label className="text-base font-medium text-gray-900">
-              {t('account_type')}
-            </label>
-            <p className="text-sm leading-5 text-gray-500">
-              {t('select_account_type')}
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl w-full">
+          
+          {/* Welcome Section */}
+          <div className="text-center mb-6 sm:mb-8 animate-slide-in">
+            <h2 className="text-2xl sm:text-3xl font-bold premium-text-bold mb-3 sm:mb-4">
+              Create Your Protection Account
+            </h2>
+            <p className="text-sm sm:text-base premium-text mb-1 sm:mb-2">
+              Join thousands of travelers protected by Trāṇa
             </p>
-            <fieldset className="mt-4">
-              <legend className="sr-only">{t('account_type')}</legend>
+            <p className="text-xs sm:text-sm premium-text-secondary">
+              Already have an account?{' '}
+              <Link to="/login" className="premium-text-gold hover:text-yellow-300 font-medium touch-manipulation">
+                Sign in here
+              </Link>
+            </p>
+          </div>
+          
+          {/* Registration Form */}
+          <div className="premium-glass-enhanced p-6 sm:p-8 rounded-3xl animate-slide-in" style={{animationDelay: '0.2s'}}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Personal Information Section */}
               <div className="space-y-4">
-                <div className="flex items-center">
-                  <input
-                    id="tourist"
-                    name="userType"
-                    type="radio"
-                    value="tourist"
-                    checked={formData.userType === 'tourist'}
-                    onChange={handleChange}
-                    className="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300"
-                  />
-                  <label htmlFor="tourist" className="ml-3 block text-sm font-medium text-gray-700">
-                    {t('tourist')}
-                  </label>
+                <h3 className="text-base sm:text-lg font-bold premium-text-bold flex items-center gap-2 mb-3 sm:mb-4">
+                  <FiUser className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
+                  <span className="text-sm sm:text-base">Personal Information</span>
+                </h3>
+                
+                {/* Name & Email Row */}
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="relative">
+                    <FiUser className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 premium-text-secondary" />
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      className="w-full pl-10 sm:pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300 touch-manipulation text-base"
+                      placeholder="Full Name"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <FiMail className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 premium-text-secondary" />
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      className="w-full pl-10 sm:pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300 touch-manipulation text-base"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <input
-                    id="police"
-                    name="userType"
-                    type="radio"
-                    value="police"
-                    checked={formData.userType === 'police'}
-                    onChange={handleChange}
-                    className="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300"
-                  />
-                  <label htmlFor="police" className="ml-3 block text-sm font-medium text-gray-700">
-                    {t('police_officer')}
+                
+                {/* Phone & Passport Row */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      required
+                      className="w-full pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300"
+                      placeholder="Phone Number"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <FiGlobe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="passport"
+                      name="passport"
+                      type="text"
+                      required
+                      className="w-full pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300"
+                      placeholder="Passport Number"
+                      value={formData.passport}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                
+                {/* Nationality & Emergency Contact Row */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <FiGlobe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="nationality"
+                      name="nationality"
+                      type="text"
+                      required
+                      className="w-full pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300"
+                      placeholder="Nationality"
+                      value={formData.nationality}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="emergencyContact"
+                      name="emergencyContact"
+                      type="tel"
+                      required
+                      className="w-full pl-12 pr-4 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-emerald-500 transition-all duration-300"
+                      placeholder="Emergency Contact"
+                      value={formData.emergencyContact}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold premium-text-bold flex items-center gap-2 mb-4">
+                  <FiLock className="w-5 h-5 text-blue-400" />
+                  Security
+                </h3>
+                
+                {/* Password Row */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <FiLock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      className="w-full pl-12 pr-12 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-blue-500 transition-all duration-300"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 premium-text-secondary hover:premium-text"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  
+                  <div className="relative">
+                    <FiLock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 premium-text-secondary" />
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      className="w-full pl-12 pr-12 py-3 premium-glass-enhanced border border-white/20 rounded-2xl premium-text placeholder-white/50 focus:border-blue-500 transition-all duration-300"
+                      placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 premium-text-secondary hover:premium-text"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Type Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold premium-text-bold flex items-center gap-2 mb-4">
+                  <FiUserCheck className="w-5 h-5 text-purple-400" />
+                  Account Type
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <label 
+                    className={`premium-glass-enhanced p-4 rounded-2xl cursor-pointer border-2 transition-all duration-300 ${
+                      formData.userType === 'tourist' ? 'border-emerald-500' : 'border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="userType"
+                      value="tourist"
+                      checked={formData.userType === 'tourist'}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        formData.userType === 'tourist' ? 'border-emerald-500 bg-emerald-500' : 'border-white/40'
+                      }`}>
+                        {formData.userType === 'tourist' && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                      </div>
+                      <FiUser className="w-5 h-5 text-emerald-400" />
+                      <div>
+                        <p className="font-bold premium-text">Tourist</p>
+                        <p className="text-xs premium-text-secondary">Personal safety dashboard</p>
+                      </div>
+                    </div>
+                  </label>
+                  
+                  <label 
+                    className={`premium-glass-enhanced p-4 rounded-2xl cursor-pointer border-2 transition-all duration-300 ${
+                      formData.userType === 'police' ? 'border-purple-500' : 'border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="userType"
+                      value="police"
+                      checked={formData.userType === 'police'}
+                      onChange={handleChange}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        formData.userType === 'police' ? 'border-purple-500 bg-purple-500' : 'border-white/40'
+                      }`}>
+                        {formData.userType === 'police' && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                      </div>
+                      <FiShield className="w-5 h-5 text-purple-400" />
+                      <div>
+                        <p className="font-bold premium-text">Police Officer</p>
+                        <p className="text-xs premium-text-secondary">Administrative control</p>
+                      </div>
+                    </div>
                   </label>
                 </div>
               </div>
-            </fieldset>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <div className="flex items-center">
-                  <div className="spinner w-4 h-4 mr-2"></div>
-                  {t('creating_account')}
-                </div>
-              ) : (
-                t('create_account')
-              )}
-            </button>
-          </div>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-glassmorphism w-full py-4 px-6 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Creating Account...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center space-x-2">
+                    <FiUserCheck className="w-5 h-5" />
+                    <span>Create Protection Account</span>
+                  </div>
+                )}
+              </button>
 
-          <div className="text-xs text-gray-500 text-center">
-            {t('by_signing_up')}{' '}
-            <a href="#" className="text-primary-600 hover:text-primary-500">
-              {t('terms_of_service')}
-            </a>{' '}
-            {t('and')}{' '}
-            <a href="#" className="text-primary-600 hover:text-primary-500">
-              {t('privacy_policy')}
-            </a>
+              {/* Terms & Privacy */}
+              <div className="text-center">
+                <p className="text-xs premium-text-secondary">
+                  By creating an account, you agree to our{' '}
+                  <a href="#" className="premium-text-gold hover:text-yellow-300 underline">
+                    Terms of Service
+                  </a>{' '}
+                  and{' '}
+                  <a href="#" className="premium-text-gold hover:text-yellow-300 underline">
+                    Privacy Policy
+                  </a>
+                </p>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

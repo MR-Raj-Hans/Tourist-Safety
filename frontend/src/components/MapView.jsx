@@ -5,15 +5,13 @@ import { useTranslation } from 'react-i18next';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix for default markers in react-leaflet
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
-
-// Custom marker icons
 const createCustomIcon = (color, iconType) => {
   const iconHtml = iconType === 'alert' 
     ? '<i class="fas fa-exclamation-triangle"></i>'
@@ -35,7 +33,7 @@ const alertIcon = createCustomIcon('#EF4444', 'alert');
 const policeIcon = createCustomIcon('#059669', 'police');
 
 const MapView = ({ 
-  center = [28.6139, 77.2090], // Default to Delhi
+  center = [28.6139, 77.2090],
   zoom = 13,
   alerts = [],
   tourists = [],
@@ -85,12 +83,18 @@ const MapView = ({
   };
 
   return (
-    <div style={{ height, width: '100%' }} className="rounded-lg overflow-hidden border border-gray-300">
+    <div style={{ height, width: '100%' }} className="rounded-lg overflow-hidden border border-gray-300 touch-manipulation">
       <MapContainer
         center={center}
         zoom={zoom}
         style={{ height: '100%', width: '100%' }}
         whenCreated={setMap}
+        touchZoom={true}
+        scrollWheelZoom={true}
+        doubleClickZoom={true}
+        dragging={true}
+        tap={true}
+        touchExtend={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -103,13 +107,13 @@ const MapView = ({
             position={[userLocation.latitude, userLocation.longitude]}
             icon={touristIcon}
           >
-            <Popup>
-              <div className="text-center">
-                <FiUser className="h-5 w-5 mx-auto mb-2 text-blue-600" />
-                <div className="font-semibold">
+            <Popup className="touch-friendly-popup">
+              <div className="text-center p-2">
+                <FiUser className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 sm:mb-2 text-blue-600" />
+                <div className="font-semibold text-sm sm:text-base">
                   {t('map.yourLocation', 'Your Location')}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-xs sm:text-sm text-gray-600 break-all">
                   {userLocation.latitude.toFixed(6)}, {userLocation.longitude.toFixed(6)}
                 </div>
                 {userLocation.accuracy && (

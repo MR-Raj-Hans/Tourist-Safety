@@ -1,443 +1,338 @@
 import React, { useState, useEffect } from 'react';
-import { FiCpu, FiTrendingUp, FiTrendingDown, FiShield, FiAlertTriangle, FiActivity, FiZap, FiTarget, FiEye, FiDatabase, FiWifi } from 'react-icons/fi';
-import { useTranslation } from 'react-i18next';
+import { 
+  FiAlertTriangle, 
+  FiMapPin, 
+  FiClock, 
+  FiShield, 
+  FiZap, 
+  FiActivity, 
+  FiTarget,
+  FiRefreshCw,
+  FiUsers,
+  FiAward,
+  FiBarChart3,
+  FiThermometer,
+  FiEye,
+  FiTrendingUp,
+  FiHeart,
+  FiTruck,
+  FiBell
+} from 'react-icons/fi';
+import Navbar from './Navbar';
 
 const AIRiskAssessment = () => {
-  const { t } = useTranslation();
-  const [riskLevel, setRiskLevel] = useState(2); // 0: Low, 1: Medium, 2: High
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [predictionAccuracy, setPredictionAccuracy] = useState(94.7);
-  const [brainActivity, setBrainActivity] = useState(0);
-  const [dataPoints, setDataPoints] = useState(0);
-  const [scanningProgress, setScanningProgress] = useState(0);
+  const [riskLevel, setRiskLevel] = useState('low');
+  const [isAssessing, setIsAssessing] = useState(false);
+  const [location, setLocation] = useState('नई दिल्ली, भारत (New Delhi, India)');
+  const [currentDateTime] = useState(new Date());
 
-  // Enhanced risk factors with real-time updates
-  const [riskFactors, setRiskFactors] = useState([
-    { name: 'Location Risk', value: 75, trend: 'up', color: 'text-red-400', impact: 'High' },
-    { name: 'Crowd Density', value: 45, trend: 'down', color: 'text-yellow-400', impact: 'Medium' },
-    { name: 'Time of Day', value: 30, trend: 'stable', color: 'text-green-400', impact: 'Low' },
-    { name: 'Weather Conditions', value: 15, trend: 'down', color: 'text-blue-400', impact: 'Low' },
-    { name: 'Historical Incidents', value: 60, trend: 'up', color: 'text-purple-400', impact: 'Medium' },
-    { name: 'Social Behavior', value: 25, trend: 'stable', color: 'text-cyan-400', impact: 'Low' }
-  ]);
+  const riskData = {
+    overall: {
+      level: 'low',
+      score: 85,
+      recommendation: 'सामान्य सावधानी के साथ यात्रा के लिए सुरक्षित (Safe for travel with normal precautions)'
+    },
+    factors: [
+      {
+        name: 'सुरक्षा स्तर (Security Level)',
+        score: 88,
+        status: 'good',
+        icon: FiShield,
+        details: 'क्षेत्र में मजबूत सुरक्षा उपस्थिति (Strong security presence in area)',
+        color: 'emerald'
+      },
+      {
+        name: 'मौसम की स्थिति (Weather Conditions)',
+        score: 92,
+        status: 'excellent',
+        icon: FiThermometer,
+        details: 'अनुकूल मौसमी परिस्थितियां (Favorable weather conditions)',
+        color: 'sapphire'
+      },
+      {
+        name: 'ट्रैफिक सुरक्षा (Traffic Safety)',
+        score: 78,
+        status: 'moderate',
+        icon: FiTruck,
+        details: 'मध्यम यातायात भीड़ (Moderate traffic congestion)',
+        color: 'amber'
+      },
+      {
+        name: 'आपातकालीन प्रतिक्रिया (Emergency Response)',
+        score: 95,
+        status: 'excellent',
+        icon: FiTarget,
+        details: 'त्वरित आपातकालीन प्रतिक्रिया उपलब्ध (Quick emergency response available)',
+        color: 'emerald'
+      },
+      {
+        name: 'भीड़-भाड़ (Crowd Density)',
+        score: 70,
+        status: 'moderate',
+        icon: FiUsers,
+        details: 'मध्यम पर्यटक गतिविधि (Moderate tourist activity)',
+        color: 'violet'
+      },
+      {
+        name: 'स्वास्थ्य सुविधाएं (Health Facilities)',
+        score: 95,
+        status: 'excellent',
+        icon: FiHeart,
+        details: 'पास में उत्कृष्ट चिकित्सा सुविधाएं (Excellent medical facilities nearby)',
+        color: 'rose'
+      },
+      {
+        name: 'स्थानीय सहायता (Local Assistance)',
+        score: 85,
+        status: 'good',
+        icon: FiMapPin,
+        details: 'स्थानीय सहायता और गाइड उपलब्ध (Local help and guides available)',
+        color: 'cyan'
+      }
+    ]
+  };
 
-  // AI Predictions with enhanced data
-  const predictions = [
-    { type: 'Theft Risk', probability: 23, confidence: 89, timeframe: '2-4 hours' },
-    { type: 'Medical Emergency', probability: 8, confidence: 95, timeframe: '24 hours' },
-    { type: 'Traffic Incident', probability: 34, confidence: 76, timeframe: '1-2 hours' },
-    { type: 'Weather Hazard', probability: 12, confidence: 92, timeframe: '6-8 hours' }
+  const stats = [
+    {
+      icon: <FiAward size={24} className="text-emerald-300" />,
+      value: '85%',
+      label: 'सुरक्षा स्कोर (Safety Score)',
+      glowClass: 'glow-emerald-subtle'
+    },
+    {
+      icon: <FiUsers size={24} className="text-sapphire-300" />,
+      value: '2.5k',
+      label: 'सक्रिय पर्यटक (Active Tourists)',
+      glowClass: 'glow-sapphire-subtle'
+    },
+    {
+      icon: <FiMapPin size={24} className="text-gold-300" />,
+      value: '24',
+      label: 'सुरक्षित क्षेत्र (Safe Zones)',
+      glowClass: 'glow-gold-subtle'
+    },
+    {
+      icon: <FiActivity size={24} className="text-red-300" />,
+      value: 'लाइव',
+      label: 'निगरानी (Monitoring)',
+      glowClass: 'glow-red-subtle'
+    }
   ];
 
-  // Neural network simulation
-  useEffect(() => {
-    const brainInterval = setInterval(() => {
-      setBrainActivity(prev => (prev + 1) % 360);
-      setDataPoints(prev => prev + Math.floor(Math.random() * 10) + 1);
-    }, 100);
-
-    return () => clearInterval(brainInterval);
-  }, []);
-
-  // Risk analysis simulation
-  useEffect(() => {
-    const analysisInterval = setInterval(() => {
-      if (isAnalyzing) {
-        setScanningProgress(prev => {
-          if (prev >= 100) {
-            setIsAnalyzing(false);
-            return 0;
-          }
-          return prev + 2;
-        });
-      }
-    }, 100);
-
-    return () => clearInterval(analysisInterval);
-  }, [isAnalyzing]);
-
-  // Dynamic risk factor updates
-  useEffect(() => {
-    const updateInterval = setInterval(() => {
-      setRiskFactors(prev => prev.map(factor => ({
-        ...factor,
-        value: Math.max(0, Math.min(100, factor.value + (Math.random() - 0.5) * 5))
-      })));
-    }, 3000);
-
-    return () => clearInterval(updateInterval);
-  }, []);
-
-  const startAnalysis = () => {
-    setIsAnalyzing(true);
-    setScanningProgress(0);
+  const handleRefreshAssessment = () => {
+    setIsAssessing(true);
+    setTimeout(() => {
+      setIsAssessing(false);
+    }, 2000);
   };
 
-  const getRiskLevelColor = () => {
-    switch (riskLevel) {
-      case 0: return 'text-green-400';
-      case 1: return 'text-yellow-400';
-      case 2: return 'text-red-400';
-      default: return 'text-gray-400';
+  const recentAlerts = [
+    {
+      id: 1,
+      type: 'info',
+      message: 'इंडिया गेट क्षेत्र में उच्च पर्यटक गतिविधि का पता चला (High tourist activity detected in India Gate area)',
+      time: '2 मिनट पहले',
+      severity: 'low'
+    },
+    {
+      id: 2,
+      type: 'warning', 
+      message: 'राजपथ पर मध्यम यातायात भीड़ (Moderate traffic congestion on Rajpath)',
+      time: '15 मिनट पहले',
+      severity: 'medium'
+    },
+    {
+      id: 3,
+      type: 'success',
+      message: 'लाल किला क्षेत्र में सुरक्षा बढ़ाई गई (Enhanced security at Red Fort area)',
+      time: '30 मिनट पहले',
+      severity: 'low'
     }
-  };
+  ];
 
-  const getRiskLevelText = () => {
-    switch (riskLevel) {
-      case 0: return 'LOW RISK';
-      case 1: return 'MEDIUM RISK';
-      case 2: return 'HIGH RISK';
-      default: return 'UNKNOWN';
-    }
-  };
-
-  const getRiskGaugeColor = (value) => {
-    if (value <= 30) return 'from-green-500 to-emerald-400';
-    if (value <= 60) return 'from-yellow-500 to-orange-400';
-    return 'from-red-500 to-pink-400';
+  const refreshAssessment = () => {
+    setIsAssessing(true);
+    setTimeout(() => {
+      setIsAssessing(false);
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/30 to-black">
-      {/* Cyberpunk Header */}
-      <div className="bg-black/80 backdrop-blur-xl border-b border-purple-500/30">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Left: AI Status */}
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <FiCpu className="w-8 h-8 text-purple-400" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-white">AI RISK ASSESSMENT</h1>
-                  <p className="text-purple-400 text-sm">Neural Network v3.2.1</p>
-                </div>
-              </div>
-              
-              <div className="h-8 w-px bg-purple-500/50"></div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <FiDatabase className="w-4 h-4 text-blue-400" />
-                  <span className="text-blue-400 text-sm font-mono">{dataPoints.toLocaleString()}</span>
-                  <span className="text-gray-400 text-xs">data points</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FiWifi className="w-4 h-4 text-green-400" />
-                  <span className="text-green-400 text-sm">{predictionAccuracy}%</span>
-                  <span className="text-gray-400 text-xs">accuracy</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right: Status */}
-            <div className="flex items-center space-x-4">
-              <div className={`px-4 py-2 rounded-xl border font-bold text-sm ${
-                riskLevel === 0 ? 'bg-green-500/20 border-green-500/50 text-green-400' :
-                riskLevel === 1 ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400' :
-                'bg-red-500/20 border-red-500/50 text-red-400'
-              }`}>
-                {getRiskLevelText()}
-              </div>
-              
-              <div className="text-gray-400 text-sm font-mono">
-                {new Date().toLocaleTimeString()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        
-        {/* AI Brain Visualization */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
+      <div className="relative z-10 py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           
-          {/* Neural Network Visual */}
-          <div className="lg:col-span-1">
-            <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-6 h-full">
-              <div className="text-center">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center justify-center">
-                  <FiCpu className="w-5 h-5 text-purple-400 mr-2" />
-                  Neural Network
-                </h3>
-                
-                {/* AI Brain Animation */}
-                <div className="relative w-48 h-48 mx-auto mb-6">
-                  <svg width="192" height="192" className="absolute inset-0">
-                    {/* Brain outline */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      fill="none"
-                      stroke="url(#brainGradient)"
-                      strokeWidth="2"
-                      className="animate-pulse"
-                    />
-                    
-                    {/* Neural connections */}
-                    {[...Array(12)].map((_, i) => (
-                      <g key={i}>
-                        <line
-                          x1={96 + 60 * Math.cos(i * 30 * Math.PI / 180)}
-                          y1={96 + 60 * Math.sin(i * 30 * Math.PI / 180)}
-                          x2={96 + 40 * Math.cos((i * 30 + brainActivity) * Math.PI / 180)}
-                          y2={96 + 40 * Math.sin((i * 30 + brainActivity) * Math.PI / 180)}
-                          stroke="rgba(168, 85, 247, 0.6)"
-                          strokeWidth="1"
-                          className="animate-pulse"
-                        />
-                        <circle
-                          cx={96 + 60 * Math.cos(i * 30 * Math.PI / 180)}
-                          cy={96 + 60 * Math.sin(i * 30 * Math.PI / 180)}
-                          r="3"
-                          fill="rgb(168, 85, 247)"
-                          className="animate-pulse"
-                        />
-                      </g>
-                    ))}
-                    
-                    {/* Center node */}
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="8"
-                      fill="rgb(168, 85, 247)"
-                      className="animate-pulse"
-                      style={{
-                        filter: `drop-shadow(0 0 ${5 + Math.sin(brainActivity * 0.1) * 3}px rgba(168, 85, 247, 0.8))`
-                      }}
-                    />
-                    
-                    <defs>
-                      <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="rgb(168, 85, 247)" />
-                        <stop offset="100%" stopColor="rgb(59, 130, 246)" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Processing Speed</span>
-                    <span className="text-purple-400 font-mono">2.4 THz</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Active Neurons</span>
-                    <span className="text-blue-400 font-mono">1,247,932</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Model Confidence</span>
-                    <span className="text-green-400 font-mono">{predictionAccuracy}%</span>
-                  </div>
-                </div>
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 rounded-xl flex items-center justify-center">
+                <FiShield className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 text-center sm:text-left">
+                AI Risk Assessment
+              </h1>
             </div>
+            <p className="text-gray-300 text-sm sm:text-base lg:text-lg max-w-3xl mx-auto px-4 sm:px-0">
+              Real-time AI-powered safety analysis for your current location and travel route.
+            </p>
           </div>
-          
-          {/* Risk Gauges */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Main Risk Gauge */}
-            <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-6">
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center">
-                <FiTarget className="w-5 h-5 text-red-400 mr-2" />
-                Threat Assessment Matrix
-              </h3>
-              
-              <div className="grid md:grid-cols-3 gap-6">
-                {riskFactors.slice(0, 3).map((factor, index) => (
-                  <div key={index} className="text-center">
-                    <div className="relative w-24 h-24 mx-auto mb-3">
-                      <svg width="96" height="96" className="transform -rotate-90">
-                        <circle
-                          cx="48"
-                          cy="48"
-                          r="36"
-                          fill="none"
-                          stroke="rgba(75, 85, 99, 0.3)"
-                          strokeWidth="8"
-                        />
-                        <circle
-                          cx="48"
-                          cy="48"
-                          r="36"
-                          fill="none"
-                          stroke={`url(#gauge${index})`}
-                          strokeWidth="8"
-                          strokeDasharray={`${2 * Math.PI * 36}`}
-                          strokeDashoffset={`${2 * Math.PI * 36 * (1 - factor.value / 100)}`}
-                          className="transition-all duration-1000"
-                        />
-                        <defs>
-                          <linearGradient id={`gauge${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor={
-                              factor.value <= 30 ? '#10b981' :
-                              factor.value <= 60 ? '#f59e0b' : '#ef4444'
-                            } />
-                            <stop offset="100%" stopColor={
-                              factor.value <= 30 ? '#34d399' :
-                              factor.value <= 60 ? '#fbbf24' : '#f87171'
-                            } />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xl font-bold text-white">{Math.round(factor.value)}%</span>
-                      </div>
-                    </div>
-                    <p className="text-sm font-medium text-white">{factor.name}</p>
-                    <p className={`text-xs ${factor.color}`}>{factor.impact} Impact</p>
-                  </div>
-                ))}
+
+          <div className="glass-card-light mb-8 animate-slide-in animate-delay-200">
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center space-x-4">
+                <FiMapPin className="text-sapphire-300" size={20} />
+                <span className="text-white font-semibold">{location}</span>
               </div>
-            </div>
-            
-            {/* Analysis Controls */}
-            <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <FiActivity className="w-5 h-5 text-blue-400 mr-2" />
-                  Real-time Analysis
-                </h3>
-                
+              <div className="flex items-center space-x-4">
+                <FiClock className="text-gold-300" size={16} />
+                <span className="text-white/80 text-sm">
+                  {currentDateTime.toLocaleDateString()} - {currentDateTime.toLocaleTimeString()}
+                </span>
                 <button
-                  onClick={startAnalysis}
-                  disabled={isAnalyzing}
-                  className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                    isAnalyzing
-                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white transform hover:scale-105'
-                  }`}
+                  onClick={handleRefreshAssessment}
+                  disabled={isAssessing}
+                  className="premium-btn-secondary p-2"
                 >
-                  {isAnalyzing ? 'Analyzing...' : 'Start Deep Scan'}
+                  <FiRefreshCw className={`w-4 h-4 ${isAssessing ? 'animate-spin' : ''}`} />
                 </button>
               </div>
-              
-              {isAnalyzing && (
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-slide-in animate-delay-300">
+            {stats.map((stat, index) => (
+              <div key={index} className="glass-card-light text-center p-4">
+                <div className={`w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center ${stat.glowClass}`}>
+                  {stat.icon}
+                </div>
+                <div className="text-2xl font-bold text-white glow-text mb-1">{stat.value}</div>
+                <div className="text-white/60 text-xs font-medium">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+              <div className="glass-card-strong bg-gradient-to-br from-emerald-600 to-emerald-800 border-2 border-white/20 animate-slide-in animate-delay-400">
+                <div className="p-8 text-center">
+                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
+                    <FiShield className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-white mb-2 glow-text">
+                    {riskData.overall.level.toUpperCase()} RISK
+                  </h2>
+                  <div className="text-5xl font-bold text-white mb-4 glow-text">
+                    {riskData.overall.score}%
+                  </div>
+                  <p className="text-white/80 text-lg mb-6">{riskData.overall.recommendation}</p>
+                  <div className="flex items-center justify-center space-x-2 text-white/60">
+                    <FiClock size={16} />
+                    <span className="text-sm">Last updated: {new Date().toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 animate-slide-in animate-delay-600">
+                <h3 className="text-xl font-bold text-white mb-4 glow-text">Recent Alerts</h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Scanning progress</span>
-                    <span className="text-purple-400">{scanningProgress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${scanningProgress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {/* Risk Factors Grid */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          
-          {/* Risk Factors */}
-          <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-6">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center">
-              <FiZap className="w-5 h-5 text-yellow-400 mr-2" />
-              Risk Factor Analysis
-            </h3>
-            
-            <div className="space-y-4">
-              {riskFactors.map((factor, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-white">{factor.name}</span>
-                    <div className="flex items-center space-x-2">
-                      <span className={`text-sm ${factor.color}`}>{Math.round(factor.value)}%</span>
-                      {factor.trend === 'up' && <FiTrendingUp className="w-4 h-4 text-red-400" />}
-                      {factor.trend === 'down' && <FiTrendingDown className="w-4 h-4 text-green-400" />}
-                      {factor.trend === 'stable' && <div className="w-4 h-1 bg-gray-400 rounded"></div>}
+                  {recentAlerts.map(alert => (
+                    <div key={alert.id} className="glass-card-light p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className={`w-2 h-2 rounded-full mt-2 ${
+                          alert.severity === 'low' ? 'bg-emerald-400' :
+                          alert.severity === 'medium' ? 'bg-gold-400' :
+                          'bg-red-400'
+                        }`}></div>
+                        <div className="flex-1">
+                          <p className="text-white text-sm">{alert.message}</p>
+                          <p className="text-white/50 text-xs mt-1">{alert.time}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className={`bg-gradient-to-r ${getRiskGaugeColor(factor.value)} h-2 rounded-full transition-all duration-1000`}
-                      style={{ width: `${factor.value}%` }}
-                    ></div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-          
-          {/* AI Predictions */}
-          <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-6">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center">
-              <FiEye className="w-5 h-5 text-cyan-400 mr-2" />
-              Predictive Analytics
-            </h3>
-            
-            <div className="space-y-4">
-              {predictions.map((prediction, index) => (
-                <div key={index} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-white font-medium">{prediction.type}</span>
-                    <span className={`text-sm px-2 py-1 rounded-full ${
-                      prediction.probability <= 20 ? 'bg-green-500/20 text-green-400' :
-                      prediction.probability <= 50 ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
-                      {prediction.probability}% risk
-                    </span>
-                  </div>
+
+            <div className="lg:col-span-2">
+              <h2 className="text-2xl font-bold text-white mb-6 glow-text animate-slide-in animate-delay-400">
+                Risk Factors Analysis
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 animate-slide-in animate-delay-500">
+                {riskData.factors.map((factor, index) => {
+                  const IconComponent = factor.icon;
+                  const getColorClasses = (color) => {
+                    switch(color) {
+                      case 'emerald': return 'from-emerald-600 to-emerald-800 text-emerald-300';
+                      case 'sapphire': return 'from-sapphire-600 to-sapphire-800 text-sapphire-300';
+                      case 'gold': return 'from-gold-600 to-gold-800 text-gold-300';
+                      default: return 'from-gray-600 to-gray-800 text-gray-300';
+                    }
+                  };
+                  const getStatusColor = (status) => {
+                    switch(status) {
+                      case 'excellent': return 'text-emerald-300';
+                      case 'good': return 'text-sapphire-300';
+                      case 'moderate': return 'text-gold-300';
+                      default: return 'text-gray-300';
+                    }
+                  };
                   
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-400">Confidence: </span>
-                      <span className="text-blue-400">{prediction.confidence}%</span>
+                  return (
+                    <div key={index} className="glass-card group hover:scale-105 transition-all duration-300">
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getColorClasses(factor.color)} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                            <IconComponent className="w-6 h-6 text-white" />
+                          </div>
+                          <div className={`text-right ${getStatusColor(factor.status)}`}>
+                            <div className="text-2xl font-bold">{factor.score}%</div>
+                            <div className="text-xs uppercase font-semibold">{factor.status}</div>
+                          </div>
+                        </div>
+                        <h3 className="text-white font-bold text-lg mb-2">{factor.name}</h3>
+                        <p className="text-white/60 text-sm mb-4">{factor.details}</p>
+                        <div className="w-full bg-gray-700/50 rounded-full h-2 mb-2">
+                          <div 
+                            className={`h-2 rounded-full bg-gradient-to-r ${getColorClasses(factor.color)}`}
+                            style={{ width: `${factor.score}%` }}
+                          ></div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-gray-400">Timeframe: </span>
-                      <span className="text-purple-400">{prediction.timeframe}</span>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 glass-card animate-slide-in animate-delay-700">
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-4 glow-text flex items-center">
+                    <FiTarget className="mr-3 text-emerald-300" />
+                    AI Recommendations
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                      <p className="text-white/80 text-sm">
+                        Current location shows low risk levels. Continue with normal tourist activities.
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-gold-400 rounded-full mt-2"></div>
+                      <p className="text-white/80 text-sm">
+                        Monitor traffic conditions on main routes. Consider alternative transportation.
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-sapphire-400 rounded-full mt-2"></div>
+                      <p className="text-white/80 text-sm">
+                        Emergency services are highly responsive in this area. Keep emergency contacts handy.
+                      </p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* Alert System */}
-        <div className="bg-gradient-to-r from-red-900/20 to-purple-900/20 rounded-2xl border border-red-500/30 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FiShield className="w-6 h-6 text-red-400" />
-              <div>
-                <h3 className="text-lg font-bold text-white">Threat Detection System</h3>
-                <p className="text-red-400 text-sm">Active monitoring • Real-time alerts</p>
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <div className="text-xs text-gray-400">Last scan:</div>
-                <div className="text-sm text-white">2 minutes ago</div>
-              </div>
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            </div>
-          </div>
-          
-          <div className="mt-4 grid md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-black/40 rounded-lg p-3">
-              <div className="text-gray-400">Threats Detected</div>
-              <div className="text-xl font-bold text-red-400">3</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-3">
-              <div className="text-gray-400">Alerts Sent</div>
-              <div className="text-xl font-bold text-yellow-400">7</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-3">
-              <div className="text-gray-400">Prevention Rate</div>
-              <div className="text-xl font-bold text-green-400">94.2%</div>
             </div>
           </div>
         </div>

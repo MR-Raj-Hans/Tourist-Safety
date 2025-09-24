@@ -1,310 +1,83 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// Translation resources
 const resources = {
   en: {
     translation: {
-      // Navigation
       navbar: {
-        title: 'SafeTravel',
+        title: 'Trana',
         dashboard: 'Dashboard',
         qr: 'My QR',
         alerts: 'My Alerts',
-        policeDashboard: 'Police Dashboard',
-        activeAlerts: 'Active Alerts',
-        geoFences: 'Geo-Fences',
         profile: 'Profile',
         logout: 'Logout',
         login: 'Login',
-        register: 'Register'
+        register: 'Register',
+        searchPlaceholder: 'Search locations, emergency alerts...',
+        search: 'Search',
+        emergency: 'Emergency',
+        analytics: 'Analytics'
       },
-      
-      // Common
       common: {
         loading: 'Loading...',
         save: 'Save',
         cancel: 'Cancel',
-        delete: 'Delete',
-        edit: 'Edit',
-        view: 'View',
-        close: 'Close',
-        refresh: 'Refresh',
-        search: 'Search',
-        filter: 'Filter',
-        export: 'Export',
-        import: 'Import'
+        refresh: 'Refresh'
       },
-
-      // Login
       login: {
         title: 'Sign in to your account',
         subtitle: 'Stay safe with real-time monitoring',
-        userType: 'I am a:',
         tourist: 'Tourist',
         police: 'Police Officer',
+        signIn: 'Sign in',
+        success: 'Login successful!',
+        error: 'Login failed. Please check your credentials.',
+        adminTitle: 'Admin Login',
+        userTitle: 'Tourist Login',
+        adminSubtitle: 'Access administrative dashboard',
+        userSubtitle: 'Stay safe with real-time monitoring',
+        loginAs: 'Logging in as:',
+        admin: 'Administrator',
         email: 'Email address',
         emailPlaceholder: 'Enter your email',
         password: 'Password',
         passwordPlaceholder: 'Enter your password',
-        signIn: 'Sign in',
-        signingIn: 'Signing in...',
-        noAccount: "Don't have an account?",
-        signUp: 'Sign up',
-        success: 'Login successful!',
-        error: 'Login failed. Please check your credentials.',
-        demo: {
-          title: 'Demo Credentials:',
-          tourist: 'Tourist',
-          police: 'Police'
-        }
+        signingIn: 'Signing in...'
       },
-
-      // Dashboard
       dashboard: {
-        welcome: 'Welcome to SafeTravel',
+        welcome: 'Welcome to Trana',
         subtitle: 'Your safety is our priority. Monitor your location and stay connected.',
         location: 'Location',
         enabled: 'Enabled',
-        disabled: 'Disabled',
-        riskLevel: 'Risk Level',
-        unknown: 'Unknown',
-        activeAlerts: 'Active Alerts',
-        lastUpdate: 'Last Update',
-        safetyAssessment: 'Safety Assessment',
-        currentRisk: 'Current Risk Level',
-        refresh: 'Refresh',
-        riskFactors: 'Risk Factors:',
-        recommendations: 'Recommendations:',
-        yourLocation: 'Your Location',
-        recentAlerts: 'Recent Alerts'
+        disabled: 'Disabled'
       },
-
-      // Panic Button
-      panic: {
-        title: 'Emergency Alert',
-        description: 'Hold the button for 3 seconds to send an emergency alert',
-        selectType: 'Select Alert Type:',
-        types: {
-          panic: 'Panic Alert',
-          medical: 'Medical Emergency',
-          crime: 'Crime Report',
-          lost: 'Lost/Need Help'
-        },
-        button: 'PANIC',
-        quickAlert: 'Quick Alert',
-        instructions: {
-          hold: 'Hold to activate:',
-          holdDesc: 'Press and hold the panic button for 3 seconds',
-          quick: 'Quick alert:',
-          quickDesc: 'Click "Quick Alert" for immediate activation'
-        },
-        locationEnabled: 'Location services enabled',
-        locationDisabled: 'Location services disabled',
-        coordinates: 'Coordinates',
-        enableLocation: 'Please enable location services for emergency alerts',
-        success: 'Emergency alert sent successfully!',
-        errors: {
-          noLocation: 'Location not available. Please enable location services.',
-          failed: 'Failed to send alert. Please try again.'
-        },
-        confirmation: {
-          title: 'Alert Sent Successfully!',
-          message: 'Emergency services have been notified and will respond shortly.',
-          ok: 'OK'
-        }
+      features: {
+        emergency: 'Emergency Alerts',
+        emergencyDesc: 'Instant panic button with real-time alerts to authorities.',
+        analytics: 'Analytics Dashboard', 
+        analyticsDesc: 'Comprehensive analytics and reporting with real-time insights.',
+        qr: 'QR Identification',
+        qrDesc: 'Dynamic QR codes for instant identification by authorities.',
+        location: 'Location Tracking',
+        locationDesc: 'Real-time GPS tracking with intelligent geo-fence monitoring.',
+        language: 'Multi-language Support',
+        languageDesc: 'Comprehensive language support with real-time translation.',
+        ai: 'AI Risk Assessment',
+        aiDesc: 'Advanced machine learning algorithms to predict and assess safety risks.'
       },
-
-      // QR Code
-      qr: {
-        title: 'Generate Safety QR Code',
-        form: {
-          locationName: 'Location Name (Optional)',
-          locationPlaceholder: 'e.g., Hotel Lobby, Tourist Center',
-          expiry: 'Expiry Time',
-          expiry1h: '1 Hour',
-          expiry6h: '6 Hours',
-          expiry12h: '12 Hours',
-          expiry24h: '24 Hours',
-          expiry48h: '2 Days',
-          expiry1w: '1 Week'
-        },
-        currentLocation: 'Current Location',
-        generating: 'Generating...',
-        generate: 'Generate QR Code',
-        current: {
-          title: 'Your Current QR Code',
-          info: 'QR Code Information',
-          created: 'Created'
-        },
-        status: {
-          expired: 'Expired',
-          active: 'Active',
-          expiresIn: 'Expires in {{time}}',
-          hoursMinutes: '{{hours}}h {{minutes}}m',
-          minutes: '{{minutes}}m'
-        },
-        actions: {
-          download: 'Download',
-          share: 'Share'
-        },
-        instructions: {
-          title: 'How to use:',
-          show: 'Show this QR code to police or authorities when requested',
-          contains: 'Contains your contact information and current location',
-          expires: 'QR code expires automatically for security',
-          generate: 'Generate a new code when this one expires'
-        },
-        history: {
-          title: 'QR Code History',
-          noLocation: 'No location name',
-          created: 'Created',
-          scans: 'Scans'
-        },
-        share: {
-          title: 'My Safety QR Code',
-          text: 'Here is my current location and contact information for safety purposes.',
-          copied: 'QR data copied to clipboard!'
-        },
-        success: {
-          generated: 'QR code generated successfully!'
-        },
-        errors: {
-          noLocation: 'Location not available. Please enable location services.',
-          generation: 'Failed to generate QR code. Please try again.'
-        }
-      },
-
-      // Map
-      map: {
-        yourLocation: 'Your Location',
-        accuracy: 'Accuracy',
-        alertTypes: {
-          panic: 'PANIC ALERT',
-          medical: 'MEDICAL EMERGENCY',
-          crime: 'CRIME REPORT',
-          lost: 'LOST/NEED HELP'
-        },
-        tourist: 'Tourist',
-        policeOfficer: 'Police Officer',
-        priority: 'Priority',
-        time: 'Time',
-        description: 'Description',
-        contact: 'Contact',
-        name: 'Name',
-        nationality: 'Nationality',
-        status: 'Status',
-        lastUpdate: 'Last Update',
-        badge: 'Badge',
-        rank: 'Rank',
-        station: 'Station',
-        created: 'Created',
-        fenceTypes: {
-          safe_zone: 'SAFE ZONE',
-          restricted_zone: 'RESTRICTED ZONE',
-          tourist_area: 'TOURIST AREA'
-        }
-      },
-
-      // Location
-      location: {
-        notSupported: 'Geolocation is not supported by this browser.',
-        error: 'Unable to retrieve your location. Please enable location services.'
-      },
-
-      // Safety
-      safety: {
-        restrictedZone: 'You are in a restricted area. Please exercise caution.',
-        highRisk: 'High risk area detected. Stay alert and consider alternative routes.'
-      },
-
-      // Alert Types
-      alertTypes: {
-        panic: 'PANIC ALERT',
-        medical: 'MEDICAL EMERGENCY',
-        crime: 'CRIME REPORT',
-        lost: 'LOST/NEED HELP'
-      },
-
-      // Registration
-      'create_account': 'Create Account',
-      'sign_in_existing': 'sign in to your existing account',
-      'full_name': 'Full Name',
-      'passport_number': 'Passport Number',
-      'nationality': 'Nationality',
-      'account_type': 'Account Type',
-      'select_account_type': 'Select the type of account you want to create',
-      'tourist': 'Tourist',
-      'police_officer': 'Police Officer',
-      'confirm_password': 'Confirm Password',
-      'passwords_do_not_match': 'Passwords do not match',
-      'password_min_length': 'Password must be at least 6 characters',
-      'registration_successful': 'Registration successful',
-      'registration_failed': 'Registration failed',
-      'creating_account': 'Creating account...',
-      'by_signing_up': 'By signing up, you agree to our',
-      'terms_of_service': 'Terms of Service',
-      'and': 'and',
-      'privacy_policy': 'Privacy Policy',
-
-      // Police Dashboard
-      'police_dashboard': 'Police Dashboard',
-      'police_dashboard_subtitle': 'Monitor tourist safety and respond to emergencies',
-      'total_tourists': 'Total Tourists',
-      'active_alerts': 'Active Alerts',
-      'resolved_today': 'Resolved Today',
-      'avg_response_time': 'Avg Response Time',
-      'loading_dashboard': 'Loading dashboard...',
-      'emergency_alerts': 'Emergency Alerts',
-      'tourist_map': 'Tourist Map',
-      'qr_scanner': 'QR Scanner',
-      'geo_fences': 'Geo-fences',
-      'no_active_alerts': 'No active alerts at the moment',
-      'priority': 'Priority',
-      'investigate': 'Investigate',
-      'resolve': 'Resolve',
-      'last_seen': 'Last seen',
-      'type': 'Type',
-      'radius': 'Radius',
-      'enter_qr_code': 'Enter QR Code',
-      'qr_code_placeholder': 'Enter QR code to scan tourist information',
-      'scan': 'Scan',
-      'tourist_information': 'Tourist Information',
-      'qr_generated': 'QR Generated',
-      'please_enter_qr_code': 'Please enter a QR code',
-      'qr_code_scanned_successfully': 'QR code scanned successfully',
-      'invalid_qr_code': 'Invalid QR code',
-      'error_scanning_qr_code': 'Error scanning QR code',
-      'create_geo_fence': 'Create Geo-fence',
-      'safe_zone': 'Safe Zone',
-      'restricted_zone': 'Restricted Zone',
-      'warning_zone': 'Warning Zone',
-      'latitude': 'Latitude',
-      'longitude': 'Longitude',
-      'description': 'Description',
-      'existing_geo_fences': 'Existing Geo-fences',
-      'no_geo_fences_created': 'No geo-fences have been created yet',
-      'delete': 'Delete',
-      'confirm_delete_geo_fence': 'Are you sure you want to delete this geo-fence?',
-      'geo_fence_created_successfully': 'Geo-fence created successfully',
-      'error_creating_geo_fence': 'Error creating geo-fence',
-      'geo_fence_deleted_successfully': 'Geo-fence deleted successfully',
-      'error_deleting_geo_fence': 'Error deleting geo-fence',
-      'alert_updated_successfully': 'Alert updated successfully',
-      'error_updating_alert': 'Error updating alert',
-      'error_loading_data': 'Error loading data',
-      'new_emergency_alert': 'New Emergency Alert',
-
-      // Status
-      'active': 'Active',
-      'investigating': 'Investigating',
-      'resolved': 'Resolved',
-      'high': 'High',
-      'medium': 'Medium',
-      'low': 'Low'
+      create_account: 'Create Account',
+      tourist: 'Tourist',
+      police_officer: 'Police Officer',
+      registration_successful: 'Registration successful',
+      registration_failed: 'Registration failed',
+      active: 'Active',
+      investigating: 'Investigating',
+      resolved: 'Resolved',
+      high: 'High',
+      medium: 'Medium',
+      low: 'Low'
     }
   },
-  
   es: {
     translation: {
       navbar: {
@@ -313,8 +86,8 @@ const resources = {
         qr: 'Mi QR',
         alerts: 'Mis Alertas',
         profile: 'Perfil',
-        logout: 'Cerrar Sesión',
-        login: 'Iniciar Sesión',
+        logout: 'Cerrar Sesion',
+        login: 'Iniciar Sesion',
         register: 'Registrarse'
       },
       common: {
@@ -324,100 +97,412 @@ const resources = {
         refresh: 'Actualizar'
       },
       login: {
-        title: 'Inicia sesión en tu cuenta',
+        title: 'Inicia sesion en tu cuenta',
         subtitle: 'Mantente seguro con monitoreo en tiempo real',
         tourist: 'Turista',
-        police: 'Oficial de Policía',
-        email: 'Correo electrónico',
+        police: 'Oficial de Policia',
+        signIn: 'Iniciar Sesion',
+        success: 'Inicio de sesion exitoso!',
+        error: 'Error al iniciar sesion.',
+        adminTitle: 'Inicio de Administrador',
+        userTitle: 'Inicio de Turista',
+        adminSubtitle: 'Acceder al panel administrativo',
+        userSubtitle: 'Mantente seguro con monitoreo en tiempo real',
+        loginAs: 'Iniciando sesion como:',
+        admin: 'Administrador',
+        email: 'Direccion de correo',
+        emailPlaceholder: 'Ingresa tu correo',
         password: 'Contraseña',
-        signIn: 'Iniciar Sesión',
-        success: '¡Inicio de sesión exitoso!',
-        error: 'Error al iniciar sesión. Verifica tus credenciales.'
+        passwordPlaceholder: 'Ingresa tu contraseña',
+        signingIn: 'Iniciando sesion...'
       },
       dashboard: {
         welcome: 'Bienvenido a ViajeSeguro',
-        subtitle: 'Tu seguridad es nuestra prioridad. Monitorea tu ubicación y mantente conectado.',
-        location: 'Ubicación',
+        subtitle: 'Tu seguridad es nuestra prioridad.',
+        location: 'Ubicacion',
         enabled: 'Habilitado',
         disabled: 'Deshabilitado'
       },
-
-      // Registro
-      'create_account': 'Crear Cuenta',
-      'sign_in_existing': 'inicia sesión en tu cuenta existente',
-      'full_name': 'Nombre Completo',
-      'passport_number': 'Número de Pasaporte',
-      'nationality': 'Nacionalidad',
-      'account_type': 'Tipo de Cuenta',
-      'select_account_type': 'Selecciona el tipo de cuenta que deseas crear',
-      'tourist': 'Turista',
-      'police_officer': 'Oficial de Policía',
-      'confirm_password': 'Confirmar Contraseña',
-      'passwords_do_not_match': 'Las contraseñas no coinciden',
-      'password_min_length': 'La contraseña debe tener al menos 6 caracteres',
-      'registration_successful': 'Registro exitoso',
-      'registration_failed': 'Error en el registro',
-      'creating_account': 'Creando cuenta...',
-      'by_signing_up': 'Al registrarte, aceptas nuestros',
-      'terms_of_service': 'Términos de Servicio',
-      'and': 'y',
-      'privacy_policy': 'Política de Privacidad',
-
-      // Panel de Policía
-      'police_dashboard': 'Panel de Policía',
-      'police_dashboard_subtitle': 'Monitorea la seguridad turística y responde a emergencias',
-      'total_tourists': 'Total de Turistas',
-      'active_alerts': 'Alertas Activas',
-      'resolved_today': 'Resueltas Hoy',
-      'avg_response_time': 'Tiempo Prom. Respuesta',
-      'loading_dashboard': 'Cargando panel...',
-      'emergency_alerts': 'Alertas de Emergencia',
-      'tourist_map': 'Mapa de Turistas',
-      'qr_scanner': 'Escáner QR',
-      'geo_fences': 'Geo-cercas',
-      'no_active_alerts': 'No hay alertas activas en este momento',
-      'priority': 'Prioridad',
-      'investigate': 'Investigar',
-      'resolve': 'Resolver',
-      'last_seen': 'Última vez visto',
-      'type': 'Tipo',
-      'radius': 'Radio',
-      'enter_qr_code': 'Ingresar Código QR',
-      'qr_code_placeholder': 'Ingresa código QR para escanear información del turista',
-      'scan': 'Escanear',
-      'tourist_information': 'Información del Turista',
-      'qr_generated': 'QR Generado',
-      'please_enter_qr_code': 'Por favor ingresa un código QR',
-      'qr_code_scanned_successfully': 'Código QR escaneado exitosamente',
-      'invalid_qr_code': 'Código QR inválido',
-      'error_scanning_qr_code': 'Error al escanear código QR',
-      'create_geo_fence': 'Crear Geo-cerca',
-      'safe_zone': 'Zona Segura',
-      'restricted_zone': 'Zona Restringida',
-      'warning_zone': 'Zona de Advertencia',
-      'latitude': 'Latitud',
-      'longitude': 'Longitud',
-      'description': 'Descripción',
-      'existing_geo_fences': 'Geo-cercas Existentes',
-      'no_geo_fences_created': 'No se han creado geo-cercas aún',
-      'delete': 'Eliminar',
-      'confirm_delete_geo_fence': '¿Estás seguro de que quieres eliminar esta geo-cerca?',
-      'geo_fence_created_successfully': 'Geo-cerca creada exitosamente',
-      'error_creating_geo_fence': 'Error al crear geo-cerca',
-      'geo_fence_deleted_successfully': 'Geo-cerca eliminada exitosamente',
-      'error_deleting_geo_fence': 'Error al eliminar geo-cerca',
-      'alert_updated_successfully': 'Alerta actualizada exitosamente',
-      'error_updating_alert': 'Error al actualizar alerta',
-      'error_loading_data': 'Error al cargar datos',
-      'new_emergency_alert': 'Nueva Alerta de Emergencia',
-
-      // Estado
-      'active': 'Activo',
-      'investigating': 'Investigando',
-      'resolved': 'Resuelto',
-      'high': 'Alto',
-      'medium': 'Medio',
-      'low': 'Bajo'
+      features: {
+        emergency: 'Alertas de Emergencia',
+        emergencyDesc: 'Boton de panico instantaneo con alertas en tiempo real.',
+        analytics: 'Panel de Analisis',
+        analyticsDesc: 'Analisis y reportes integrales.',
+        qr: 'Identificacion QR',
+        qrDesc: 'Codigos QR dinamicos para identificacion instantanea.',
+        location: 'Seguimiento de Ubicacion',
+        locationDesc: 'Seguimiento GPS en tiempo real.',
+        language: 'Soporte Multiidioma',
+        languageDesc: 'Soporte integral de idiomas.',
+        ai: 'Evaluacion de Riesgo AI',
+        aiDesc: 'Algoritmos avanzados de aprendizaje automatico.'
+      },
+      create_account: 'Crear Cuenta',
+      tourist: 'Turista',
+      police_officer: 'Oficial de Policia',
+      registration_successful: 'Registro exitoso',
+      registration_failed: 'Error en el registro',
+      active: 'Activo',
+      investigating: 'Investigando',
+      resolved: 'Resuelto',
+      high: 'Alto',
+      medium: 'Medio',
+      low: 'Bajo'
+    }
+  },
+  hi: {
+    translation: {
+      navbar: {
+        title: 'त्राण',
+        dashboard: 'डैशबोर्ड',
+        qr: 'मेरा QR',
+        alerts: 'मेरे अलर्ट',
+        profile: 'प्रोफ़ाइल',
+        logout: 'लॉग आउट',
+        login: 'लॉग इन',
+        register: 'पंजीकरण',
+        searchPlaceholder: 'स्थान, आपातकालीन अलर्ट खोजें...',
+        search: 'खोजें',
+        emergency: 'आपातकाल',
+        analytics: 'एनालिटिक्स'
+      },
+      common: {
+        loading: 'लोड हो रहा है...',
+        save: 'सेव करें',
+        cancel: 'रद्द करें',
+        refresh: 'रिफ्रेश करें'
+      },
+      login: {
+        title: 'अपने खाते में साइन इन करें',
+        subtitle: 'रियल-टाइम मॉनिटरिंग के साथ सुरक्षित रहें',
+        tourist: 'पर्यटक',
+        police: 'पुलिस अधिकारी',
+        signIn: 'साइन इन करें',
+        success: 'लॉगिन सफल रहा!',
+        error: 'लॉगिन असफल हुआ। कृपया अपनी जानकारी जांचें।',
+        adminTitle: 'प्रशासक लॉगिन',
+        userTitle: 'पर्यटक लॉगिन',
+        adminSubtitle: 'प्रशासनिक डैशबोर्ड तक पहुंच',
+        userSubtitle: 'रियल-टाइम मॉनिटरिंग के साथ सुरक्षित रहें',
+        loginAs: 'इस रूप में लॉगिन कर रहे हैं:',
+        admin: 'प्रशासक',
+        email: 'ईमेल पता',
+        emailPlaceholder: 'अपना ईमेल दर्ज करें',
+        password: 'पासवर्ड',
+        passwordPlaceholder: 'अपना पासवर्ड दर्ज करें',
+        signingIn: 'साइन इन हो रहा है...'
+      },
+      dashboard: {
+        welcome: 'त्राण में आपका स्वागत है',
+        subtitle: 'आपकी सुरक्षा हमारी प्राथमिकता है। अपने स्थान की निगरानी करें और जुड़े रहें।',
+        location: 'स्थान',
+        enabled: 'सक्रिय',
+        disabled: 'निष्क्रिय',
+        riskLevel: 'जोखिम आकलन',
+        unknown: 'स्कैन हो रहा है...',
+        activeAlerts: 'सक्रिय अलर्ट',
+        lastUpdate: 'अंतिम सिंक',
+        recentAlerts: 'हाल के अलर्ट',
+        emergency: 'आपातकालीन नियंत्रण',
+        panicHelp: 'आपातकालीन अलर्ट भेजने के लिए 3 सेकंड दबाकर रखें',
+        qrId: 'डिजिटल ID',
+        quickActions: 'त्वरित क्रियाएं'
+      },
+      features: {
+        emergency: 'आपातकालीन अलर्ट',
+        emergencyDesc: 'प्राधिकरणों को रियल-टाइम अलर्ट के साथ तुरंत पैनिक बटन।',
+        analytics: 'एनालिटिक्स डैशबोर्ड', 
+        analyticsDesc: 'रियल-टाइम अंतर्दृष्टि के साथ व्यापक विश्लेषण और रिपोर्टिंग।',
+        qr: 'QR पहचान',
+        qrDesc: 'प्राधिकरणों द्वारा तुरंत पहचान के लिए डायनामिक QR कोड।',
+        location: 'स्थान ट्रैकिंग',
+        locationDesc: 'बुद्धिमान जियो-फेंस मॉनिटरिंग के साथ रियल-टाइम GPS ट्रैकिंग।',
+        language: 'बहुभाषी समर्थन',
+        languageDesc: 'रियल-टाइम अनुवाद के साथ व्यापक भाषा समर्थन।',
+        ai: 'AI जोखिम आकलन',
+        aiDesc: 'सुरक्षा जोखिमों की भविष्यवाणी और आकलन के लिए उन्नत मशीन लर्निंग एल्गोरिदम।'
+      },
+      create_account: 'खाता बनाएं',
+      tourist: 'पर्यटक',
+      police_officer: 'पुलिस अधिकारी',
+      registration_successful: 'पंजीकरण सफल',
+      registration_failed: 'पंजीकरण असफल',
+      active: 'सक्रिय',
+      investigating: 'जांच में',
+      resolved: 'हल हो गया',
+      high: 'उच्च',
+      medium: 'मध्यम',
+      low: 'कम',
+      safety: {
+        restrictedZone: 'आप एक प्रतिबंधित क्षेत्र में हैं। कृपया सावधानी बरतें।',
+        highRisk: 'उच्च जोखिम क्षेत्र का पता चला। सतर्क रहें और वैकल्पिक मार्गों पर विचार करें।'
+      },
+      alertTypes: {
+        theft: 'चोरी',
+        accident: 'दुर्घटना',
+        harassment: 'उत्पीड़न',
+        medical: 'चिकित्सा',
+        fire: 'आग',
+        natural_disaster: 'प्राकृतिक आपदा'
+      }
+    }
+  },
+  ta: {
+    translation: {
+      navbar: {
+        title: 'त्राण',
+        dashboard: 'டாஷ்போர்ட்',
+        qr: 'என் QR',
+        alerts: 'என் எச்சரிக்கைகள்',
+        profile: 'சுயவிவரம்',
+        logout: 'வெளியேறு',
+        login: 'உள்நுழை',
+        register: 'பதிவு செய்',
+        searchPlaceholder: 'இடங்கள், அவசர எச்சரிக்கைகளைத் தேடுங்கள்...',
+        search: 'தேடு',
+        emergency: 'அவசரநிலை',
+        analytics: 'பகுப்பாய்வு'
+      },
+      common: {
+        loading: 'ஏற்றப்படுகிறது...',
+        save: 'சேமி',
+        cancel: 'ரத்து செய்',
+        refresh: 'புதுப்பி'
+      },
+      login: {
+        title: 'உங்கள் கணக்கில் உள்நுழைக',
+        subtitle: 'நிகழ்நேர கண்காணிப்புடன் பாதுகாப்பாக இருங்கள்',
+        tourist: 'சுற்றுலாப் பயணி',
+        police: 'போலீஸ் அதிகாரி',
+        signIn: 'உள்நுழை',
+        success: 'உள்நுழைவு வெற்றிகரமானது!',
+        error: 'உள்நுழைவு தோல்வியடைந்தது। உங்கள் விவரங்களைச் சரிபார்க்கவும்।'
+      },
+      dashboard: {
+        welcome: 'त्राण இல் உங்களை வரவேற்கிறோம்',
+        subtitle: 'உங்கள் பாதுகாப்பு எங்களுக்கு முன்னுரிமை. உங்கள் இடத்தைக் கண்காணித்து இணைந்திருங்கள்।',
+        location: 'இடம்',
+        enabled: 'செயல்படுத்தப்பட்டது',
+        disabled: 'முடக்கப்பட்டது',
+        riskLevel: 'ஆபத்து மதிப்பீடு',
+        unknown: 'ஸ்கேன் செய்யப்படுகிறது...',
+        activeAlerts: 'செயலில் உள்ள எச்சரிக்கைகள்',
+        lastUpdate: 'கடைசி ஒத்திசைவு',
+        recentAlerts: 'சமீபத்திய எச்சரிக்கைகள்',
+        emergency: 'அவசரகால கட்டுப்பாடு',
+        panicHelp: 'அவசர எச்சரிக்கை அனுப்ப 3 வினாடிகள் அழுத்திப் பிடிக்கவும்',
+        qrId: 'டிஜிட்டல் அடையாளம்',
+        quickActions: 'விரைவு செயல்கள்'
+      },
+      features: {
+        emergency: 'அவசரகால எச்சரிக்கைகள்',
+        emergencyDesc: 'அதிகாரிகளுக்கு நிகழ்நேர எச்சரிக்கைகளுடன் உடனடி பீதி பொத்தான்.',
+        analytics: 'பகுப்பாய்வு டாஷ்போர்ட்',
+        analyticsDesc: 'நிகழ்நேர நுண்ணறிவுகளுடன் விரிவான பகுப்பாய்வு மற்றும் அறிக்கையிடல்.',
+        qr: 'QR அடையாளம்',
+        qrDesc: 'அதிகாரிகளால் உடனடி அடையாளத்திற்கான டைனமிக் QR குறியீடுகள்.',
+        location: 'இடக் கண்காணிப்பு',
+        locationDesc: 'அறிவார்ந்த ஜியோ-ஃபென்ஸ் கண்காணிப்புடன் நிகழ்நேர GPS கண்காணிப்பு.',
+        language: 'பல மொழி ஆதரவு',
+        languageDesc: 'நிகழ்நேர மொழிபெயர்ப்புடன் விரிவான மொழி ஆதரவு.',
+        ai: 'AI ஆபத்து மதிப்பீடு',
+        aiDesc: 'பாதுகாப்பு ஆபத்துகளை முன்னறிவிக்க மற்றும் மதிப்பிடுவதற்கான மேம்பட்ட இயந்திர கற்றல் வழிமுறைகள்.'
+      },
+      create_account: 'கணக்கை உருவாக்கு',
+      tourist: 'சுற்றுலாப் பயணி',
+      police_officer: 'போலீஸ் அதிகாரி',
+      registration_successful: 'பதிவு வெற்றிகரமானது',
+      registration_failed: 'பதிவு தோல்வியடைந்தது',
+      active: 'செயலில்',
+      investigating: 'விசாரணையில்',
+      resolved: 'தீர்க்கப்பட்டது',
+      high: 'உயர்ந்த',
+      medium: 'நடுத்தர',
+      low: 'குறைந்த',
+      safety: {
+        restrictedZone: 'நீங்கள் தடைசெய்யப்பட்ட பகுதியில் இருக்கிறீர்கள். தயவுசெய்து எச்சரிக்கையாக இருங்கள்.',
+        highRisk: 'அதிக ஆபத்துள்ள பகுதி கண்டறியப்பட்டது. விழிப்புடன் இருந்து மாற்று வழிகளைக் கவனியுங்கள்.'
+      },
+      alertTypes: {
+        theft: 'திருட்டு',
+        accident: 'விபத்து',
+        harassment: 'துன்புறுத்தல்',
+        medical: 'மருத்துவம்',
+        fire: 'தீ',
+        natural_disaster: 'இயற்கை பேரழிவு'
+      }
+    }
+  },
+  te: {
+    translation: {
+      navbar: {
+        title: 'त्राण',
+        dashboard: 'డాష్‌బోర్డ్',
+        qr: 'నా QR',
+        alerts: 'నా హెచ్చరికలు',
+        profile: 'ప్రొఫైల్',
+        logout: 'లాగ్ అవుట్',
+        login: 'లాగిన్',
+        register: 'నమోదు',
+        searchPlaceholder: 'స్థానాలు, అత్యవసర హెచ్చరికలను వెతకండి...',
+        search: 'వెతకండి',
+        emergency: 'అత్యవసరం',
+        analytics: 'విశ్లేషణలు'
+      },
+      common: {
+        loading: 'లోడ్ అవుతోంది...',
+        save: 'సేవ్ చేయండి',
+        cancel: 'రద్దు చేయండి',
+        refresh: 'రిఫ్రెష్ చేయండి'
+      },
+      login: {
+        title: 'మీ ఖాతాలో సైన్ ఇన్ చేయండి',
+        subtitle: 'రియల్-టైమ్ మానిటరింగ్‌తో సురక్షితంగా ఉండండి',
+        tourist: 'పర్యాటకుడు',
+        police: 'పోలీస్ అధికారి',
+        signIn: 'సైన్ ఇన్ చేయండి',
+        success: 'లాగిన్ విజయవంతమైంది!',
+        error: 'లాగిన్ విఫలమైంది. దయచేసి మీ వివరాలను తనిఖీ చేయండి.'
+      },
+      dashboard: {
+        welcome: 'त्राण కు స్వాగతం',
+        subtitle: 'మీ భద్రత మా ప్రాధాన్యత. మీ స్థానాన్ని పర్యవేక్షించండి మరియు కనెక్ట్‌గా ఉండండి.',
+        location: 'స్థానం',
+        enabled: 'ప్రారంభించబడింది',
+        disabled: 'నిలిపివేయబడింది',
+        riskLevel: 'ప్రమాద అంచనా',
+        unknown: 'స్కాన్ చేస్తోంది...',
+        activeAlerts: 'క్రియాశీల హెచ్చరికలు',
+        lastUpdate: 'చివరి సింక్',
+        recentAlerts: 'ఇటీవలి హెచ్చరికలు',
+        emergency: 'అత్యవసర నియంత్రణ',
+        panicHelp: 'అత్యవసర హెచ్చరిక పంపడానికి 3 సెకన్లు నొక్కి పట్టుకోండి',
+        qrId: 'డిజిటల్ ID',
+        quickActions: 'వేగవంతమైన చర్యలు'
+      },
+      features: {
+        emergency: 'అత్యవసర హెచ్చరికలు',
+        emergencyDesc: 'అధికారులకు రియల్-టైమ్ హెచ్చరికలతో తక్షణ పానిక్ బటన్.',
+        analytics: 'విశ్లేషణల డాష్‌బోర్డ్',
+        analyticsDesc: 'రియల్-టైమ్ అంతర్దృష్టులతో సమగ్ర విశ్లేషణ మరియు రిపోర్టింగ్.',
+        qr: 'QR గుర్తింపు',
+        qrDesc: 'అధికారుల ద్వారా తక్షణ గుర్తింపు కోసం డైనమిక్ QR కోడ్‌లు.',
+        location: 'స్థాన ట్రాకింగ్',
+        locationDesc: 'తెలివైన జియో-ఫెన్స్ మానిటరింగ్‌తో రియల్-టైమ్ GPS ట్రాకింగ్.',
+        language: 'బహుభాషా మద్దతు',
+        languageDesc: 'రియల్-టైమ్ అనువాదంతో సమగ్ర భాషా మద్దతు.',
+        ai: 'AI ప్రమాద అంచనా',
+        aiDesc: 'భద్రతా ప్రమాదాలను అంచనా వేయడానికి మరియు అంచనా వేయడానికి అధునాతన మెషిన్ లర్నింగ్ అల్గారిథమ్‌లు.'
+      },
+      create_account: 'ఖాతా సృష్టించండి',
+      tourist: 'పర్యాటకుడు',
+      police_officer: 'పోలీస్ అధికారి',
+      registration_successful: 'నమోదు విజయవంతమైంది',
+      registration_failed: 'నమోదు విఫలమైంది',
+      active: 'క్రియాశీలం',
+      investigating: 'దర్యాప్తులో',
+      resolved: 'పరిష్కరించబడింది',
+      high: 'అధిక',
+      medium: 'మధ్యస్థ',
+      low: 'తక్కువ',
+      safety: {
+        restrictedZone: 'మీరు నిషేధిత ప్రాంతంలో ఉన్నారు. దయచేసి జాగ్రత్త వహించండి.',
+        highRisk: 'అధిక ప్రమాద ప్రాంతం కనుగొనబడింది. అప్రమత్తంగా ఉండండి మరియు ప్రత్యామనాయ మార్గాలను పరిగణించండి.'
+      },
+      alertTypes: {
+        theft: 'దొంగతనం',
+        accident: 'ప్రమాదం',
+        harassment: 'వేధింపులు',
+        medical: 'వైద్యం',
+        fire: 'అగ్ని',
+        natural_disaster: 'సహజ విపత్తు'
+      }
+    }
+  },
+  bn: {
+    translation: {
+      navbar: {
+        title: 'त्राण',
+        dashboard: 'ড্যাশবোর্ড',
+        qr: 'আমার QR',
+        alerts: 'আমার সতর্কতা',
+        profile: 'প্রোফাইল',
+        logout: 'লগ আউট',
+        login: 'লগ ইন',
+        register: 'নিবন্ধন',
+        searchPlaceholder: 'স্থান, জরুরি সতর্কতা অনুসন্ধান করুন...',
+        search: 'অনুসন্ধান',
+        emergency: 'জরুরি অবস্থা',
+        analytics: 'বিশ্লেষণ'
+      },
+      common: {
+        loading: 'লোড হচ্ছে...',
+        save: 'সংরক্ষণ',
+        cancel: 'বাতিল',
+        refresh: 'রিফ্রেশ'
+      },
+      login: {
+        title: 'আপনার অ্যাকাউন্টে সাইন ইন করুন',
+        subtitle: 'রিয়েল-টাইম মনিটরিং এর সাথে নিরাপদ থাকুন',
+        tourist: 'পর্যটক',
+        police: 'পুলিশ অফিসার',
+        signIn: 'সাইন ইন করুন',
+        success: 'লগইন সফল হয়েছে!',
+        error: 'লগইন ব্যর্থ হয়েছে। দয়া করে আপনার তথ্য পরীক্ষা করুন।'
+      },
+      dashboard: {
+        welcome: 'त्राण এ স্বাগতম',
+        subtitle: 'আপনার নিরাপত্তা আমাদের অগ্রাধিকার। আপনার অবস্থান নিরীক্ষণ করুন এবং সংযুক্ত থাকুন।',
+        location: 'অবস্থান',
+        enabled: 'সক্রিয়',
+        disabled: 'নিষ্ক্রিয়',
+        riskLevel: 'ঝুঁকি মূল্যায়ন',
+        unknown: 'স্ক্যান করা হচ্ছে...',
+        activeAlerts: 'সক্রিয় সতর্কতা',
+        lastUpdate: 'শেষ সিঙ্ক',
+        recentAlerts: 'সাম্প্রতিক সতর্কতা',
+        emergency: 'জরুরি নিয়ন্ত্রণ',
+        panicHelp: 'জরুরি সতর্কতা পাঠাতে ৩ সেকেন্ড চেপে ধরুন',
+        qrId: 'ডিজিটাল আইডি',
+        quickActions: 'দ্রুত ক্রিয়া'
+      },
+      features: {
+        emergency: 'জরুরি সতর্কতা',
+        emergencyDesc: 'কর্তৃপক্ষের কাছে রিয়েল-টাইম সতর্কতাসহ তাৎক্ষণিক প্যানিক বোতাম।',
+        analytics: 'বিশ্লেষণ ড্যাশবোর্ড',
+        analyticsDesc: 'রিয়েল-টাইম অন্তর্দৃষ্টিসহ ব্যাপক বিশ্লেষণ এবং রিপোর্টিং।',
+        qr: 'QR সনাক্তকরণ',
+        qrDesc: 'কর্তৃপক্ষের দ্বারা তাৎক্ষণিক সনাক্তকরণের জন্য ডায়নামিক QR কোড।',
+        location: 'অবস্থান ট্র্যাকিং',
+        locationDesc: 'বুদ্ধিমান জিও-ফেন্স মনিটরিং সহ রিয়েল-টাইম GPS ট্র্যাকিং।',
+        language: 'বহুভাষিক সমর্থন',
+        languageDesc: 'রিয়েল-টাইম অনুবাদসহ ব্যাপক ভাষা সমর্থন।',
+        ai: 'AI ঝুঁকি মূল্যায়ন',
+        aiDesc: 'নিরাপত্তা ঝুঁকি ভবিষ্যদ্বাণী এবং মূল্যায়নের জন্য উন্নত মেশিন লার্নিং অ্যালগরিদম।'
+      },
+      create_account: 'অ্যাকাউন্ট তৈরি করুন',
+      tourist: 'পর্যটক',
+      police_officer: 'পুলিশ অফিসার',
+      registration_successful: 'নিবন্ধন সফল',
+      registration_failed: 'নিবন্ধন ব্যর্থ',
+      active: 'সক্রিয়',
+      investigating: 'তদন্তাধীন',
+      resolved: 'সমাধান হয়েছে',
+      high: 'উচ্চ',
+      medium: 'মধ্যম',
+      low: 'নিম্ন',
+      safety: {
+        restrictedZone: 'আপনি একটি নিষিদ্ধ এলাকায় আছেন। দয়া করে সতর্ক থাকুন।',
+        highRisk: 'উচ্চ ঝুঁকিপূর্ণ এলাকা সনাক্ত হয়েছে। সতর্ক থাকুন এবং বিকল্প পথ বিবেচনা করুন।'
+      },
+      alertTypes: {
+        theft: 'চুরি',
+        accident: 'দুর্ঘটনা',
+        harassment: 'হয়রানি',
+        medical: 'চিকিৎসা',
+        fire: 'আগুন',
+        natural_disaster: 'প্রাকৃতিক দুর্যোগ'
+      }
     }
   }
 };
@@ -426,16 +511,20 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en', // default language
+    lng: localStorage.getItem('selectedLanguage') || 'en', // Load saved language preference
     fallbackLng: 'en',
-    
+    debug: false, // Set to true for debugging
     interpolation: {
-      escapeValue: false // react already does escaping
+      escapeValue: false
     },
-    
     react: {
       useSuspense: false
     }
   });
+
+// Listen for language changes and save to localStorage
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('selectedLanguage', lng);
+});
 
 export default i18n;

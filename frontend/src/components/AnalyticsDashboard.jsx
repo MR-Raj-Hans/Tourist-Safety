@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiBarChart2, FiTrendingUp, FiMapPin, FiShield, FiAlertTriangle, FiUsers, FiClock, FiFilter, FiDownload, FiRefreshCw, FiEye, FiActivity } from 'react-icons/fi';
+import Navbar from './Navbar';
 
 const AnalyticsDashboard = () => {
   const [timeRange, setTimeRange] = useState('7d');
@@ -196,21 +197,23 @@ const AnalyticsDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <Navbar />
       
+      <div className="relative z-10">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-purple-200/50">
+      <div className="bg-white/10 backdrop-blur-xl border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                <FiBarChart2 className="w-6 h-6 text-white" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-600 rounded-xl flex items-center justify-center">
+                <FiBarChart2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
                   Analytics Dashboard
                 </h1>
-                <p className="text-gray-600">Real-time safety insights and trends</p>
+                <p className="text-gray-300 text-sm sm:text-base">Real-time safety insights and trends</p>
               </div>
             </div>
             
@@ -219,25 +222,25 @@ const AnalyticsDashboard = () => {
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 border border-purple-200 rounded-xl bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                className="premium-btn-secondary px-4 py-2 rounded-xl font-medium"
               >
-                <option value="24h">Last 24 Hours</option>
-                <option value="7d">Last 7 Days</option>
-                <option value="30d">Last 30 Days</option>
-                <option value="90d">Last 90 Days</option>
+                <option value="24h" className="bg-gray-800 text-white">Last 24 Hours</option>
+                <option value="7d" className="bg-gray-800 text-white">Last 7 Days</option>
+                <option value="30d" className="bg-gray-800 text-white">Last 30 Days</option>
+                <option value="90d" className="bg-gray-800 text-white">Last 90 Days</option>
               </select>
               
               <button
                 onClick={generateMockData}
-                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center space-x-2"
+                className="premium-btn-primary flex items-center space-x-2"
               >
                 <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                <span>Refresh</span>
+                <span>रिफ्रेश (Refresh)</span>
               </button>
               
-              <button className="px-4 py-2 border border-purple-300 hover:border-purple-400 text-purple-600 rounded-xl transition-all duration-300 flex items-center space-x-2">
+              <button className="premium-btn-secondary flex items-center space-x-2">
                 <FiDownload className="w-4 h-4" />
-                <span>Export</span>
+                <span>निर्यात (Export)</span>
               </button>
             </div>
           </div>
@@ -247,21 +250,21 @@ const AnalyticsDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8 px-2 sm:px-0">
           {metrics.map((metric) => {
             const IconComponent = metric.icon;
             return (
               <div
                 key={metric.id}
-                className="bg-white/80 backdrop-blur-xl rounded-2xl border border-purple-200/50 shadow-xl p-6 hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+                className="glass-card p-6 hover:glow-sapphire transition-all duration-300 cursor-pointer group"
                 onClick={() => setSelectedMetric(metric.id)}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${metric.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300`}>
-                    <IconComponent className="w-6 h-6 text-white" />
+                  <div className={`w-12 h-12 bg-gradient-to-br ${metric.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                    <IconComponent className="w-6 h-6 text-white drop-shadow-sm" />
                   </div>
                   <div className={`flex items-center space-x-1 ${
-                    metric.trend === 'up' ? 'text-green-500' : 'text-red-500'
+                    metric.trend === 'up' ? 'text-green-300' : 'text-red-300'
                   }`}>
                     <FiTrendingUp className={`w-4 h-4 ${metric.trend === 'down' ? 'rotate-180' : ''}`} />
                     <span className="text-sm font-medium">{metric.change}</span>
@@ -269,13 +272,13 @@ const AnalyticsDashboard = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-gray-800">{metric.value}</h3>
-                  <p className="text-sm font-medium text-gray-600">{metric.name}</p>
-                  <p className="text-xs text-gray-500">{metric.description}</p>
+                  <h3 className="text-2xl font-bold text-white drop-shadow-sm">{metric.value}</h3>
+                  <p className="text-sm font-medium text-white/90">{metric.name}</p>
+                  <p className="text-xs text-white/70">{metric.description}</p>
                 </div>
                 
                 {selectedMetric === metric.id && (
-                  <div className="mt-4 h-1 bg-gradient-to-r from-purple-400 to-blue-500 rounded-full"></div>
+                  <div className="mt-4 h-1 bg-gradient-to-r from-white/60 to-white/30 rounded-full"></div>
                 )}
               </div>
             );
@@ -286,26 +289,26 @@ const AnalyticsDashboard = () => {
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           
           {/* Trend Chart */}
-          <div className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-2xl border border-purple-200/50 shadow-xl p-6">
+          <div className="lg:col-span-2 glass-card p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                  <FiActivity className="w-5 h-5 text-purple-500 mr-2" />
+                <h3 className="text-xl font-bold text-white flex items-center drop-shadow-sm">
+                  <FiActivity className="w-5 h-5 text-white/90 mr-2" />
                   Safety Trends
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-white/80 text-sm">
                   {metrics.find(m => m.id === selectedMetric)?.name} over time
                 </p>
               </div>
               <div className="flex items-center space-x-2">
-                <FiFilter className="w-4 h-4 text-gray-400" />
+                <FiFilter className="w-4 h-4 text-white/70" />
                 <select
                   value={selectedMetric}
                   onChange={(e) => setSelectedMetric(e.target.value)}
-                  className="text-sm border border-gray-300 rounded-lg px-3 py-1 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-purple-400"
+                  className="text-sm border border-white/30 rounded-lg px-3 py-1 bg-white/10 backdrop-blur-sm focus:ring-2 focus:ring-white/50 text-white"
                 >
                   {metrics.map(metric => (
-                    <option key={metric.id} value={metric.id}>
+                    <option key={metric.id} value={metric.id} className="bg-gray-800 text-white">
                       {metric.name}
                     </option>
                   ))}
@@ -314,10 +317,10 @@ const AnalyticsDashboard = () => {
             </div>
             
             {isLoading ? (
-              <div className="h-48 bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg animate-pulse flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-r from-white/10 to-white/5 rounded-lg animate-pulse flex items-center justify-center">
                 <div className="flex items-center space-x-2">
-                  <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-                  <span className="text-purple-600">Loading chart data...</span>
+                  <div className="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+                  <span className="text-white">Loading chart data...</span>
                 </div>
               </div>
             ) : (
@@ -326,65 +329,65 @@ const AnalyticsDashboard = () => {
           </div>
           
           {/* Real-time Stats */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-blue-200/50 shadow-xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-              <FiEye className="w-5 h-5 text-blue-500 mr-2" />
-              Live Monitor
+          <div className="glass-card p-6">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center glow-text-sapphire">
+              <FiEye className="w-5 h-5 text-sapphire-300 mr-2" />
+              लाइव मॉनिटर (Live Monitor)
             </h3>
             
             <div className="space-y-6">
               {/* Real-time counters */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Active Alerts</span>
+                  <span className="text-white/80">Active Alerts</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                    <span className="text-lg font-bold text-red-600">3</span>
+                    <span className="text-lg font-bold text-red-300">3</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Safe Zones</span>
+                  <span className="text-white/80">Safe Zones</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-lg font-bold text-green-600">18</span>
+                    <span className="text-lg font-bold text-green-300">18</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Response Teams</span>
+                  <span className="text-white/80">Response Teams</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                    <span className="text-lg font-bold text-blue-600">7</span>
+                    <span className="text-lg font-bold text-blue-300">7</span>
                   </div>
                 </div>
               </div>
               
               {/* Activity Feed */}
-              <div className="border-t border-gray-200 pt-4">
-                <h4 className="font-semibold text-gray-700 mb-3">Recent Activity</h4>
+              <div className="border-t border-white/20 pt-4">
+                <h4 className="font-semibold text-white/90 mb-3">Recent Activity</h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-green-400 rounded-full mt-1.5"></div>
                     <div>
-                      <p className="text-gray-800">Tourist check-in at Zone A</p>
-                      <p className="text-gray-500 text-xs">2 minutes ago</p>
+                      <p className="text-white/90">Tourist check-in at Zone A</p>
+                      <p className="text-white/60 text-xs">2 minutes ago</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-yellow-400 rounded-full mt-1.5"></div>
                     <div>
-                      <p className="text-gray-800">Weather alert issued</p>
-                      <p className="text-gray-500 text-xs">5 minutes ago</p>
+                      <p className="text-white/90">Weather alert issued</p>
+                      <p className="text-white/60 text-xs">5 minutes ago</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5"></div>
                     <div>
-                      <p className="text-gray-800">Emergency response resolved</p>
-                      <p className="text-gray-500 text-xs">12 minutes ago</p>
+                      <p className="text-white/90">Emergency response resolved</p>
+                      <p className="text-white/60 text-xs">12 minutes ago</p>
                     </div>
                   </div>
                 </div>
@@ -397,65 +400,65 @@ const AnalyticsDashboard = () => {
         <div className="grid lg:grid-cols-2 gap-6">
           
           {/* Risk Heat Map */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-indigo-200/50 shadow-xl p-6">
+          <div className="bg-white/15 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                  <FiMapPin className="w-5 h-5 text-indigo-500 mr-2" />
+                <h3 className="text-xl font-bold text-white flex items-center drop-shadow-sm">
+                  <FiMapPin className="w-5 h-5 text-white/90 mr-2" />
                   Risk Heat Map
                 </h3>
-                <p className="text-gray-600 text-sm">Geographic risk distribution</p>
+                <p className="text-white/80 text-sm">Geographic risk distribution</p>
               </div>
               
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-red-400 rounded"></div>
-                  <span className="text-xs text-gray-600">High</span>
+                  <span className="text-xs text-white/80">High</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                  <span className="text-xs text-gray-600">Medium</span>
+                  <span className="text-xs text-white/80">Medium</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-green-400 rounded"></div>
-                  <span className="text-xs text-gray-600">Low</span>
+                  <span className="text-xs text-white/80">Low</span>
                 </div>
               </div>
             </div>
             
             {isLoading ? (
-              <div className="h-64 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg animate-pulse"></div>
+              <div className="h-64 bg-gradient-to-r from-white/10 to-white/5 rounded-lg animate-pulse"></div>
             ) : (
               <HeatMap data={heatMapData} />
             )}
           </div>
           
           {/* Location Insights */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-violet-200/50 shadow-xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-              <FiMapPin className="w-5 h-5 text-violet-500 mr-2" />
+          <div className="bg-white/15 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl p-6">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center drop-shadow-sm">
+              <FiMapPin className="w-5 h-5 text-white/90 mr-2" />
               Location Insights
             </h3>
             
             <div className="space-y-6">
               {/* Top Locations */}
               <div>
-                <h4 className="font-semibold text-gray-700 mb-3">Highest Traffic Areas</h4>
+                <h4 className="font-semibold text-white/90 mb-3">Highest Traffic Areas</h4>
                 <div className="space-y-3">
                   {[
-                    { name: 'Central Square', count: 245, safety: 92 },
-                    { name: 'Tourist Beach', count: 189, safety: 88 },
-                    { name: 'Museum District', count: 156, safety: 95 },
-                    { name: 'Shopping Area', count: 134, safety: 85 }
+                    { name: 'Bengaluru Palace', count: 245, safety: 92 },
+                    { name: 'Mysore Palace', count: 189, safety: 88 },
+                    { name: 'Hampi Heritage Site', count: 156, safety: 95 },
+                    { name: 'Coorg Hill Station', count: 134, safety: 85 }
                   ].map((location, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-violet-50 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/10">
                       <div>
-                        <p className="font-medium text-gray-800">{location.name}</p>
-                        <p className="text-sm text-gray-600">{location.count} tourists</p>
+                        <p className="font-medium text-white">{location.name}</p>
+                        <p className="text-sm text-white/70">{location.count} tourists</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-violet-600">{location.safety}%</p>
-                        <p className="text-xs text-gray-500">Safety Score</p>
+                        <p className="text-lg font-bold text-white">{location.safety}%</p>
+                        <p className="text-xs text-white/60">Safety Score</p>
                       </div>
                     </div>
                   ))}
@@ -463,22 +466,23 @@ const AnalyticsDashboard = () => {
               </div>
               
               {/* Quick Stats */}
-              <div className="border-t border-gray-200 pt-4">
-                <h4 className="font-semibold text-gray-700 mb-3">Coverage Statistics</h4>
+              <div className="border-t border-white/20 pt-4">
+                <h4 className="font-semibold text-white/90 mb-3">Coverage Statistics</h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-gradient-to-br from-violet-50 to-purple-50 rounded-lg">
-                    <p className="text-2xl font-bold text-violet-600">98.5%</p>
-                    <p className="text-xs text-gray-600">Area Coverage</p>
+                  <div className="text-center p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/10">
+                    <p className="text-2xl font-bold text-white">98.5%</p>
+                    <p className="text-xs text-white/70">Area Coverage</p>
                   </div>
-                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600">24/7</p>
-                    <p className="text-xs text-gray-600">Monitoring</p>
+                  <div className="text-center p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/10">
+                    <p className="text-2xl font-bold text-white">24/7</p>
+                    <p className="text-xs text-white/70">Monitoring</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

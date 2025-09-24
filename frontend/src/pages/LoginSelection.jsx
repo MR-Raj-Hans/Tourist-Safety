@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiUsers, FiShield, FiMap, FiTriangle, FiCamera, FiUser } from 'react-icons/fi';
+import Navbar from '../components/Navbar';
 
 const LoginSelection = () => {
   const navigate = useNavigate();
@@ -14,204 +15,153 @@ const LoginSelection = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white font-inter overflow-hidden">
-      {/* Split Screen Container */}
-      <div className="flex min-h-screen">
-        
-        {/* Left Section - 65% Width */}
-        <div className="relative w-[65%] flex items-center justify-start pl-20">
-          
-          {/* Illustration Circles Container */}
-          <div className="relative">
-            
-            {/* Main Center Circle - 250px x 250px */}
-            <div className="relative w-[250px] h-[250px] bg-gradient-to-br from-blue-500 to-blue-300 rounded-full shadow-[0px_8px_20px_rgba(0,0,0,0.15)] flex items-center justify-center animate-float-main">
-              {/* Couple on Scooter Illustration */}
-              <div className="flex items-center space-x-3">
-                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                  <FiUser className="w-8 h-8 text-white" />
-                </div>
-                <div className="w-12 h-12 bg-white/30 rounded-full flex items-center justify-center">
-                  <FiCamera className="w-6 h-6 text-white" />
-                </div>
+    <div className="min-h-screen bg-gradient-aurora relative overflow-hidden">
+      <Navbar />
+      
+      {/* Main Content */}
+      <div className="relative z-10 pt-4">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center">
+              <div className="w-14 h-14 rounded-3xl premium-glass-enhanced flex items-center justify-center shadow-xl">
+                <FiShield size={24} className="premium-text-gold" />
               </div>
-              {/* Scooter representation */}
-              <div className="absolute bottom-8 w-20 h-8 bg-white/20 rounded-full"></div>
-            </div>
-
-            {/* Top-Left Small Circle - 120px x 120px */}
-            <div 
-              className="absolute w-[120px] h-[120px] bg-gradient-to-br from-purple-400 to-purple-200 rounded-full shadow-lg flex items-center justify-center animate-float-diagonal"
-              style={{ 
-                top: '-80px', 
-                left: '-160px' 
-              }}
-            >
-              {/* Hiking Illustration */}
-              <FiTriangle className="w-10 h-10 text-white" />
-            </div>
-
-            {/* Top-Right Small Circle - 120px x 120px */}
-            <div 
-              className="absolute w-[120px] h-[120px] bg-gradient-to-br from-pink-400 to-pink-200 rounded-full shadow-lg flex items-center justify-center animate-bounce-scale"
-              style={{ 
-                top: '-80px', 
-                right: '-120px' 
-              }}
-            >
-              {/* Traveler with Backpack */}
-              <FiMap className="w-10 h-10 text-white" />
-            </div>
-          </div>
-
-          {/* Tagline Text */}
-          <div className="absolute bottom-32 left-20">
-            <h1 className="font-bold text-2xl text-gray-900 mb-2 leading-tight">
-              Explore the world easily
-            </h1>
-            <p className="font-normal text-base text-gray-500">
-              To your desire
-            </p>
-          </div>
-        </div>
-
-        {/* Right Section - 35% Width */}
-        <div className="w-[35%] flex items-center justify-center pr-20">
-          
-          {/* Login Card */}
-          <div className="w-[350px] bg-white/70 backdrop-blur-[20px] border border-white/30 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.2)] p-8 animate-slide-in-right">
-            
-            {/* Card Header */}
-            <div className="text-center mb-6">
-              {/* Path to Mountain Illustration */}
-              <div className="flex justify-center mb-4">
-                <svg width="80" height="40" viewBox="0 0 80 40" className="text-red-500">
-                  <path 
-                    d="M10 35 Q25 25 40 20 Q55 15 70 10" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    fill="none"
-                    strokeDasharray="4,2"
-                  />
-                  <circle cx="10" cy="35" r="2" fill="currentColor" />
-                  <polygon points="70,10 75,20 65,20" fill="currentColor" />
-                </svg>
+              <div className="ml-4">
+                <h1 className="text-3xl font-bold premium-text-bold">
+                  Trāṇa (त्राण)
+                </h1>
+                <p className="text-sm premium-text-secondary">Protection • Refuge • Care</p>
               </div>
-              
-              <h2 className="font-bold text-[28px] text-gray-900">
-                Welcome
-              </h2>
-            </div>
-
-            {/* Buttons Container */}
-            <div className="space-y-4">
-              
-              {/* Traveler Button */}
-              <button
-                onClick={handleTravelerLogin}
-                className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium text-base rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 animate-pulse-idle"
-              >
-                <FiUsers className="w-5 h-5" />
-                <span>Traveler</span>
-              </button>
-
-              {/* Admin Button */}
-              <button
-                onClick={handleAdminLogin}
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium text-base rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 animate-pulse-idle"
-              >
-                <FiShield className="w-5 h-5" />
-                <span>Admin</span>
-              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom Animations CSS */}
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        .font-inter {
-          font-family: 'Inter', sans-serif;
-        }
+      {/* Main Content */}
+      <div className="relative z-10 min-h-[calc(100vh-120px)] flex items-center justify-center px-4">
+        <div className="max-w-6xl w-full">
+          
+          {/* Welcome Section */}
+          <div className="text-center mb-16 animate-slide-in">
+            <h2 className="text-4xl md:text-5xl font-bold premium-text-bold mb-4">
+              Welcome to Your Safety Guardian
+            </h2>
+            <p className="text-xl premium-text mb-2">
+              Choose your access level to continue
+            </p>
+            <p className="premium-text-secondary">
+              Experience premium protection with our futuristic safety system
+            </p>
+          </div>
 
-        @keyframes float-main {
-          0%, 100% { 
-            transform: translateY(0px); 
-          }
-          50% { 
-            transform: translateY(-10px); 
-          }
-        }
+          {/* Selection Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            
+            {/* Tourist Access Card */}
+            <div 
+              className="premium-glass-enhanced p-8 cursor-pointer group hover:scale-105 transition-all duration-500 rounded-3xl animate-slide-in"
+              onClick={handleTravelerLogin}
+              style={{animationDelay: '0.2s'}}
+            >
+              {/* Card Header */}
+              <div className="text-center mb-8">
+                <div className="w-24 h-24 mx-auto mb-6 premium-glass-enhanced rounded-3xl flex items-center justify-center shadow-xl group-hover:animate-pulse">
+                  <FiUsers className="w-12 h-12 premium-text-gold" />
+                </div>
+                <h3 className="text-2xl font-bold premium-text-bold mb-2">Tourist Access</h3>
+                <p className="premium-text-secondary">Personal safety dashboard for travelers</p>
+              </div>
 
-        @keyframes float-diagonal {
-          0%, 100% { 
-            transform: translateY(0px) translateX(0px); 
-          }
-          50% { 
-            transform: translateY(-12px) translateX(-8px); 
-          }
-        }
+              {/* Features List */}
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3">
+                  <FiMap className="w-5 h-5 text-emerald-400" />
+                  <span className="premium-text">Real-time location tracking</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiShield className="w-5 h-5 text-emerald-400" />
+                  <span className="premium-text">Emergency panic button</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiCamera className="w-5 h-5 text-emerald-400" />
+                  <span className="premium-text">Digital ID & QR codes</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiTriangle className="w-5 h-5 text-emerald-400" />
+                  <span className="premium-text">AI risk assessment</span>
+                </div>
+              </div>
 
-        @keyframes bounce-scale {
-          0%, 100% { 
-            transform: scale(0.95); 
-          }
-          50% { 
-            transform: scale(1.05); 
-          }
-        }
+              {/* CTA Button */}
+              <button className="btn-glassmorphism w-full py-4 px-6 font-bold transition-all duration-300 group-hover:scale-105">
+                <div className="flex items-center justify-center space-x-2">
+                  <FiUser className="w-5 h-5" />
+                  <span>Access Tourist Portal</span>
+                </div>
+              </button>
+            </div>
 
-        @keyframes slide-in-right {
-          0% { 
-            transform: translateX(80px); 
-            opacity: 0; 
-          }
-          100% { 
-            transform: translateX(0px); 
-            opacity: 1; 
-          }
-        }
+            {/* Police Access Card */}
+            <div 
+              className="premium-glass-enhanced p-8 cursor-pointer group hover:scale-105 transition-all duration-500 rounded-3xl animate-slide-in"
+              onClick={handleAdminLogin}
+              style={{animationDelay: '0.4s'}}
+            >
+              {/* Card Header */}
+              <div className="text-center mb-8">
+                <div className="w-24 h-24 mx-auto mb-6 premium-glass-enhanced rounded-3xl flex items-center justify-center shadow-xl group-hover:animate-pulse">
+                  <FiShield className="w-12 h-12 premium-text-gold" />
+                </div>
+                <h3 className="text-2xl font-bold premium-text-bold mb-2">Police Command</h3>
+                <p className="premium-text-secondary">Administrative control center</p>
+              </div>
 
-        @keyframes pulse-idle {
-          0%, 100% { 
-            opacity: 1; 
-          }
-          50% { 
-            opacity: 0.9; 
-          }
-        }
+              {/* Features List */}
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center space-x-3">
+                  <FiMap className="w-5 h-5 text-purple-400" />
+                  <span className="premium-text">Live monitoring dashboard</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiTriangle className="w-5 h-5 text-purple-400" />
+                  <span className="premium-text">Alert management system</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiUsers className="w-5 h-5 text-purple-400" />
+                  <span className="premium-text">Tourist registry access</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <FiCamera className="w-5 h-5 text-purple-400" />
+                  <span className="premium-text">Security verification tools</span>
+                </div>
+              </div>
 
-        .animate-float-main {
-          animation: float-main 4s ease-in-out infinite;
-        }
+              {/* CTA Button */}
+              <button className="btn-glassmorphism w-full py-4 px-6 font-bold transition-all duration-300 group-hover:scale-105">
+                <div className="flex items-center justify-center space-x-2">
+                  <FiShield className="w-5 h-5" />
+                  <span>Access Command Center</span>
+                </div>
+              </button>
+            </div>
+          </div>
 
-        .animate-float-diagonal {
-          animation: float-diagonal 5s ease-in-out infinite;
-        }
-
-        .animate-bounce-scale {
-          animation: bounce-scale 3s ease-in-out infinite;
-        }
-
-        .animate-slide-in-right {
-          animation: slide-in-right 1s ease-out;
-        }
-
-        .animate-pulse-idle {
-          animation: pulse-idle 2s ease-in-out infinite;
-        }
-
-        /* Hover Effects */
-        button:hover {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
-        }
-
-        button:hover.from-purple-600 {
-          background: linear-gradient(135deg, rgba(147, 51, 234, 0.9), rgba(109, 40, 217, 0.9));
-        }
-      `}</style>
+          {/* Bottom Info */}
+          <div className="text-center mt-16 animate-slide-in" style={{animationDelay: '0.6s'}}>
+            <div className="premium-glass-enhanced p-6 max-w-2xl mx-auto rounded-3xl">
+              <p className="premium-text mb-4">
+                <span className="font-bold premium-text-gold">Trāṇa</span> provides cutting-edge safety solutions 
+                powered by advanced AI and real-time monitoring technology.
+              </p>
+              <div className="flex items-center justify-center space-x-6 text-sm premium-text-secondary">
+                <span>🔐 Secure Authentication</span>
+                <span>🛡️ 24/7 Protection</span>
+                <span>🌐 Real-time Updates</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

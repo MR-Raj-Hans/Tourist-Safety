@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Test - Tourist Safety System</title>
+    <script src="https://unpkg.com/i18next@23.7.6/dist/umd/i18next.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #3730a3 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .language-switcher {
+            position: relative;
+        }
+        
+        .language-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .language-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #1f2937;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .dropdown-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            font-weight: 600;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #f3f4f6;
+        }
+        
+        .card ul {
+            list-style: none;
+        }
+        
+        .card li {
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .card p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+        }
+        
+        .button {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 4px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .button:hover {
+            background: #2563eb;
+        }
+        
+        .current-lang {
+            margin-top: 8px;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .instructions {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+        
+        .instructions h3 {
+            color: #fbbf24;
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        
+        .instructions p {
+            color: #fef3c7;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Language Switcher -->
+        <div class="header">
+            <div>
+                <h1 class="title" id="main-title">Trana - Language Test</h1>
+                <p class="current-lang">Current Language: <span id="current-language">English</span></p>
+            </div>
+            
+            <div class="language-switcher">
+                <button class="language-button" id="language-button">
+                    🌐 <span id="selected-language">English</span> ▼
+                </button>
+                <div class="dropdown" id="language-dropdown">
+                    <div class="dropdown-item active" data-lang="en">🇺🇸 English</div>
+                    <div class="dropdown-item" data-lang="hi">🇮🇳 हिंदी (Hindi)</div>
+                    <div class="dropdown-item" data-lang="ta">🇮🇳 தமிழ் (Tamil)</div>
+                    <div class="dropdown-item" data-lang="te">🇮🇳 తెలుగు (Telugu)</div>
+                    <div class="dropdown-item" data-lang="bn">🇮🇳 বাংলা (Bengali)</div>
+                    <div class="dropdown-item" data-lang="es">🇪🇸 Español (Spanish)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Content -->
+        <div class="grid">
+            <!-- Navigation Test -->
+            <div class="card">
+                <h2 id="nav-title">Navigation</h2>
+                <ul>
+                    <li id="nav-dashboard">• Dashboard</li>
+                    <li id="nav-emergency">• Emergency</li>
+                    <li id="nav-qr">• My QR</li>
+                    <li id="nav-alerts">• My Alerts</li>
+                    <li id="nav-profile">• Profile</li>
+                    <li id="nav-logout">• Logout</li>
+                </ul>
+            </div>
+
+            <!-- Dashboard Test -->
+            <div class="card">
+                <h2 id="dashboard-title">Dashboard</h2>
+                <div>
+                    <p><strong id="dashboard-welcome">Welcome to Trana</strong></p>
+                    <p id="dashboard-subtitle">Your safety is our priority</p>
+                    <p><span id="dashboard-location">Location</span>: <span id="dashboard-enabled">Enabled</span></p>
+                    <p id="dashboard-emergency">Emergency Control</p>
+                </div>
+            </div>
+
+            <!-- Features Test -->
+            <div class="card">
+                <h2 id="features-title">Features</h2>
+                <div>
+                    <p><strong id="features-emergency">Emergency Alerts</strong></p>
+                    <p id="features-emergency-desc">Instant panic button</p>
+                    <p><strong id="features-qr">QR Identification</strong></p>
+                    <p id="features-qr-desc">Dynamic QR codes</p>
+                    <p><strong id="features-location">Location Tracking</strong></p>
+                    <p id="features-location-desc">Real-time GPS tracking</p>
+                </div>
+            </div>
+
+            <!-- Common Elements Test -->
+            <div class="card">
+                <h2 id="common-title">Common Elements</h2>
+                <div>
+                    <button class="button" id="btn-save">Save</button>
+                    <button class="button" id="btn-cancel">Cancel</button>
+                    <button class="button" id="btn-refresh">Refresh</button>
+                    <p id="common-loading">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>🧪 Language Test Instructions</h3>
+            <p>1. Click the language dropdown (🌐) in the top-right corner</p>
+            <p>2. Select "🇮🇳 हिंदी (Hindi)" - All text should change to Hindi</p>
+            <p>3. Try other languages: Tamil, Telugu, Bengali, Spanish</p>
+            <p>4. Check that the language preference is saved when you refresh</p>
+            <p>5. Open browser console (F12) to see language change logs</p>
+        </div>
+    </div>
+
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                "navbar.title": "Trana",
+                "navbar.dashboard": "Dashboard",
+                "navbar.emergency": "Emergency",
+                "navbar.qr": "My QR",
+                "navbar.alerts": "My Alerts",
+                "navbar.profile": "Profile",
+                "navbar.logout": "Logout",
+                "dashboard.welcome": "Welcome to Trana",
+                "dashboard.subtitle": "Your safety is our priority",
+                "dashboard.location": "Location",
+                "dashboard.enabled": "Enabled",
+                "dashboard.emergency": "Emergency Control",
+                "features.emergency": "Emergency Alerts",
+                "features.emergencyDesc": "Instant panic button",
+                "features.qr": "QR Identification",
+                "features.qrDesc": "Dynamic QR codes",
+                "features.location": "Location Tracking",
+                "features.locationDesc": "Real-time GPS tracking",
+                "common.save": "Save",
+                "common.cancel": "Cancel",
+                "common.refresh": "Refresh",
+                "common.loading": "Loading..."
+            },
+            hi: {
+                "navbar.title": "त्राण",
+                "navbar.dashboard": "डैशबोर्ड",
+                "navbar.emergency": "आपातकाल",
+                "navbar.qr": "मेरा QR",
+                "navbar.alerts": "मेरी चेतावनी",
+                "navbar.profile": "प्रोफ़ाइल",
+                "navbar.logout": "लॉग आउट",
+                "dashboard.welcome": "त्राण में आपका स्वागत है",
+                "dashboard.subtitle": "आपकी सुरक्षा हमारी प्राथमिकता है",
+                "dashboard.location": "स्थान",
+                "dashboard.enabled": "सक्षम",
+                "dashboard.emergency": "आपातकालीन नियंत्रण",
+                "features.emergency": "आपातकालीन चेतावनी",
+                "features.emergencyDesc": "तत्काल पैनिक बटन",
+                "features.qr": "QR पहचान",
+                "features.qrDesc": "गतिशील QR कोड",
+                "features.location": "स्थान ट्रैकिंग",
+                "features.locationDesc": "रियल-टाइम GPS ट्रैकिंग",
+                "common.save": "सहेजें",
+                "common.cancel": "रद्द करें",
+                "common.refresh": "ताज़ा करें",
+                "common.loading": "लोड हो रहा है..."
+            },
+            ta: {
+                "navbar.title": "த்ராண",
+                "navbar.dashboard": "டாஷ்போர்டு",
+                "navbar.emergency": "அவசரநிலை",
+                "navbar.qr": "என் QR",
+                "navbar.alerts": "என் எச்சரிக்கைகள்",
+                "navbar.profile": "சுயவிவரம்",
+                "navbar.logout": "வெளியேறு",
+                "dashboard.welcome": "த்ராணவிற்கு வரவேற்கிறோம்",
+                "dashboard.subtitle": "உங்கள் பாதுகாப்பு எங்கள் முன்னுரிமை",
+                "dashboard.location": "இடம்",
+                "dashboard.enabled": "இயக்கப்பட்டது",
+                "dashboard.emergency": "அவசரகால கட்டுப்பாடு",
+                "features.emergency": "அவசரகால எச்சரிக்கைகள்",
+                "features.emergencyDesc": "உடனடி பீதி பொத்தான்",
+                "features.qr": "QR அடையாளம்",
+                "features.qrDesc": "மாறும் QR குறியீடுகள்",
+                "features.location": "இட கண்காணிப்பு",
+                "features.locationDesc": "நிகழ்நேர GPS கண்காணிப்பு",
+                "common.save": "சேமி",
+                "common.cancel": "ரத்து",
+                "common.refresh": "புதுப்பி",
+                "common.loading": "ஏற்றுகிறது..."
+            },
+            te: {
+                "navbar.title": "త్రాణ",
+                "navbar.dashboard": "డాష్‌బోర్డ్",
+                "navbar.emergency": "అత్యవసరం",
+                "navbar.qr": "నా QR",
+                "navbar.alerts": "నా హెచ్చరికలు",
+                "navbar.profile": "ప్రొఫైల్",
+                "navbar.logout": "లాగ్ అవుట్",
+                "dashboard.welcome": "త్రాణకు స్వాగతం",
+                "dashboard.subtitle": "మీ భద్రత మా ప్రాధాన్యత",
+                "dashboard.location": "స్థానం",
+                "dashboard.enabled": "ప్రారంభించబడింది",
+                "dashboard.emergency": "అత్యవసర నియంత్రణ",
+                "features.emergency": "అత్యవసర హెచ్చరికలు",
+                "features.emergencyDesc": "తక్షణ పాంక్ బటన్",
+                "features.qr": "QR గుర్తింపు",
+                "features.qrDesc": "డైనమిక్ QR కోడ్లు",
+                "features.location": "లొకేషన్ ట్రాకింగ్",
+                "features.locationDesc": "రియల్-టైమ్ GPS ట్రాకింగ్",
+                "common.save": "సేవ్",
+                "common.cancel": "రద్దు",
+                "common.refresh": "రిఫ్రెష్",
+                "common.loading": "లోడ్ అవుతోంది..."
+            },
+            bn: {
+                "navbar.title": "ত্রাণ",
+                "navbar.dashboard": "ড্যাশবোর্ড",
+                "navbar.emergency": "জরুরি",
+                "navbar.qr": "আমার QR",
+                "navbar.alerts": "আমার সতর্কতা",
+                "navbar.profile": "প্রোফাইল",
+                "navbar.logout": "লগ আউট",
+                "dashboard.welcome": "ত্রাণে স্বাগতম",
+                "dashboard.subtitle": "আপনার নিরাপত্তা আমাদের অগ্রাধিকার",
+                "dashboard.location": "অবস্থান",
+                "dashboard.enabled": "সক্রিয়",
+                "dashboard.emergency": "জরুরি নিয়ন্ত্রণ",
+                "features.emergency": "জরুরি সতর্কতা",
+                "features.emergencyDesc": "তাৎক্ষণিক প্যানিক বোতাম",
+                "features.qr": "QR শনাক্তকরণ",
+                "features.qrDesc": "গতিশীল QR কোড",
+                "features.location": "অবস্থান ট্র্যাকিং",
+                "features.locationDesc": "রিয়েল-টাইম GPS ট্র্যাকিং",
+                "common.save": "সংরক্ষণ",
+                "common.cancel": "বাতিল",
+                "common.refresh": "রিফ্রেশ",
+                "common.loading": "লোড হচ্ছে..."
+            },
+            es: {
+                "navbar.title": "Trana",
+                "navbar.dashboard": "Tablero",
+                "navbar.emergency": "Emergencia",
+                "navbar.qr": "Mi QR",
+                "navbar.alerts": "Mis Alertas",
+                "navbar.profile": "Perfil",
+                "navbar.logout": "Cerrar Sesión",
+                "dashboard.welcome": "Bienvenido a Trana",
+                "dashboard.subtitle": "Tu seguridad es nuestra prioridad",
+                "dashboard.location": "Ubicación",
+                "dashboard.enabled": "Habilitado",
+                "dashboard.emergency": "Control de Emergencia",
+                "features.emergency": "Alertas de Emergencia",
+                "features.emergencyDesc": "Botón de pánico instantáneo",
+                "features.qr": "Identificación QR",
+                "features.qrDesc": "Códigos QR dinámicos",
+                "features.location": "Seguimiento de Ubicación",
+                "features.locationDesc": "Seguimiento GPS en tiempo real",
+                "common.save": "Guardar",
+                "common.cancel": "Cancelar",
+                "common.refresh": "Actualizar",
+                "common.loading": "Cargando..."
+            }
+        };
+
+        const languageNames = {
+            en: "English",
+            hi: "हिंदी (Hindi)",
+            ta: "தமிழ் (Tamil)",
+            te: "తెలుగు (Telugu)",
+            bn: "বাংলা (Bengali)",
+            es: "Español (Spanish)"
+        };
+
+        let currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        // Initialize i18next
+        i18next.init({
+            lng: currentLanguage,
+            fallbackLng: 'en',
+            resources: Object.keys(translations).reduce((acc, lang) => {
+                acc[lang] = { translation: translations[lang] };
+                return acc;
+            }, {})
+        }, function(err, t) {
+            updateUI();
+        });
+
+        function updateUI() {
+            console.log('Updating UI for language:', currentLanguage);
+            
+            // Update all text elements
+            const elements = {
+                'main-title': 'navbar.title',
+                'current-language': languageNames[currentLanguage],
+                'selected-language': languageNames[currentLanguage],
+                'nav-title': 'Navigation',
+                'nav-dashboard': '• ' + i18next.t('navbar.dashboard'),
+                'nav-emergency': '• ' + i18next.t('navbar.emergency'),
+                'nav-qr': '• ' + i18next.t('navbar.qr'),
+                'nav-alerts': '• ' + i18next.t('navbar.alerts'),
+                'nav-profile': '• ' + i18next.t('navbar.profile'),
+                'nav-logout': '• ' + i18next.t('navbar.logout'),
+                'dashboard-title': 'Dashboard',
+                'dashboard-welcome': i18next.t('dashboard.welcome'),
+                'dashboard-subtitle': i18next.t('dashboard.subtitle'),
+                'dashboard-location': i18next.t('dashboard.location'),
+                'dashboard-enabled': i18next.t('dashboard.enabled'),
+                'dashboard-emergency': i18next.t('dashboard.emergency'),
+                'features-title': 'Features',
+                'features-emergency': i18next.t('features.emergency'),
+                'features-emergency-desc': i18next.t('features.emergencyDesc'),
+                'features-qr': i18next.t('features.qr'),
+                'features-qr-desc': i18next.t('features.qrDesc'),
+                'features-location': i18next.t('features.location'),
+                'features-location-desc': i18next.t('features.locationDesc'),
+                'common-title': 'Common Elements',
+                'btn-save': i18next.t('common.save'),
+                'btn-cancel': i18next.t('common.cancel'),
+                'btn-refresh': i18next.t('common.refresh'),
+                'common-loading': i18next.t('common.loading')
+            };
+
+            Object.entries(elements).forEach(([id, text]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (typeof text === 'string' && text.startsWith('navbar.')) {
+                        element.textContent = i18next.t(text);
+                    } else {
+                        element.textContent = text;
+                    }
+                }
+            });
+
+            // Update active language in dropdown
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.lang === currentLanguage) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update main title with "- Language Test"
+            document.getElementById('main-title').textContent = i18next.t('navbar.title') + ' - Language Test';
+        }
+
+        // Language switching functionality
+        document.getElementById('language-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('show');
+            
+            console.log('Language dropdown toggled');
+        });
+
+        // Handle language selection
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const newLanguage = this.dataset.lang;
+                console.log('Language changed to:', newLanguage);
+                
+                currentLanguage = newLanguage;
+                localStorage.setItem('selectedLanguage', newLanguage);
+                
+                i18next.changeLanguage(newLanguage, function(err, t) {
+                    updateUI();
+                });
+                
+                document.getElementById('language-dropdown').classList.remove('show');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            document.getElementById('language-dropdown').classList.remove('show');
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

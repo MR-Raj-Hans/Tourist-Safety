@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Default to the backend running on port 5001 in local development (backend started on 5001)
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+// Default to the backend running on port 3001 in local development (backend started on 3001)
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 // Create axios instance
 const api = axios.create({
@@ -172,5 +172,69 @@ export const getTourists = async () => {
     return { success: false, message: error.response?.data?.message || 'Error fetching tourists' };
   }
 };
+
+// Translation API services
+export const translateAPI = {
+  // Translate single text
+  translate: async (text, sourceLang = 'auto', targetLang = 'en') => {
+    try {
+      const response = await api.post('/translate', {
+        text,
+        sourceLang,
+        targetLang
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Translation error:', error);
+      throw new Error(error.response?.data?.error || 'Translation failed');
+    }
+  },
+
+  // Translate multiple texts
+  translateBatch: async (texts, sourceLang = 'auto', targetLang = 'en') => {
+    try {
+      const response = await api.post('/translate/batch', {
+        texts,
+        sourceLang,
+        targetLang
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Batch translation error:', error);
+      throw new Error(error.response?.data?.error || 'Batch translation failed');
+    }
+  },
+
+  // Detect language only
+  detectLanguage: async (text) => {
+    try {
+      const response = await api.post('/translate', {
+        text,
+        detectOnly: true
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Language detection error:', error);
+      throw new Error(error.response?.data?.error || 'Language detection failed');
+    }
+  },
+
+  // Get supported languages
+  getLanguages: async () => {
+    try {
+      const response = await api.get('/translate/languages');
+      return response.data;
+    } catch (error) {
+      console.error('Get languages error:', error);
+      throw new Error(error.response?.data?.error || 'Failed to fetch supported languages');
+    }
+  }
+};
+
+// Export translation functions for easier import
+export const translate = translateAPI.translate;
+export const translateBatch = translateAPI.translateBatch;
+export const detectLanguage = translateAPI.detectLanguage;
+export const getLanguages = translateAPI.getLanguages;
 
 export default api;

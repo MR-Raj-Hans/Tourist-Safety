@@ -1,133 +1,180 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiMoon, FiSun, FiAlertTriangle, FiBarChart2, FiGrid, FiMapPin, FiGlobe, FiCpu } from 'react-icons/fi';
+import { FiAlertTriangle, FiBarChart2, FiMapPin, FiGlobe, FiCpu, FiShield, FiUser, FiEye, FiActivity } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
+import { getUserData } from '../services/api';
+import Navbar from '../components/Navbar';
 
-// NOTE: Top-left shows only the "BUTTON" label now. Interactive demo buttons are inside each card.
-
-const FeatureCard = ({ bgColor, icon, title, desc, onClick }) => (
+const PremiumFeatureCard = ({ priority, icon, title, desc, stats, onClick }) => (
   <div
     role="button"
     tabIndex={0}
     onClick={onClick}
     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick && onClick(); }}
-    className="w-[320px] h-[180px] rounded-[16px] bg-[#F9FAFB] p-6 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 hover:scale-[1.02] transition-all duration-250 flex flex-col justify-center items-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-300"
+    className="premium-glass-enhanced p-6 rounded-3xl cursor-pointer group animate-slide-in transition-all duration-300 hover:scale-105 hover:shadow-2xl"
   >
-    <div className="flex items-start gap-4">
-      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${bgColor}`}> {icon} </div>
-      <div>
-        <h3 className="text-black font-bold text-[16px]">{title}</h3>
-        <p className="text-gray-500 text-[14px] mt-2" style={{ maxWidth: '220px' }}>{desc}</p>
+    <div className="flex items-start justify-between mb-4">
+      <div className="p-3 rounded-2xl premium-glass-enhanced transition-all duration-300 group-hover:scale-110">
+        <div className="w-6 h-6 premium-text-gold">
+          {icon}
+        </div>
       </div>
+      {stats && (
+        <div className="text-right">
+          <div className="text-2xl font-bold premium-text-bold">{stats.value}</div>
+          <div className="text-xs premium-text-secondary font-medium">{stats.label}</div>
+        </div>
+      )}
+    </div>
+    
+    <div className="space-y-3">
+      <h3 className="text-xl premium-text-bold group-hover:premium-text-gold transition-all duration-300 leading-tight">
+        {title}
+      </h3>
+      <p className="premium-text-secondary text-sm leading-relaxed">
+        {desc}
+      </p>
+      
+      {priority && (
+        <div className="flex items-center justify-between pt-3 border-t border-white/20">
+          <span className="text-xs font-bold premium-text-secondary uppercase tracking-wide">
+            Priority: {priority}
+          </span>
+          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-emerald-400 to-blue-400 animate-pulse"></div>
+        </div>
+      )}
     </div>
   </div>
 );
 
-const ModernDashboard = () => {
-  const [dark, setDark] = useState(false);
-  const navigate = useNavigate();
+const PremiumFooter = () => (
+  <footer className="mt-12 premium-glass-enhanced p-6 rounded-3xl">
+    <div className="text-center">
+      <div className="flex items-center justify-center space-x-2 mb-3">
+        <FiShield className="w-5 h-5 premium-text-gold" />
+        <span className="text-lg font-bold premium-text-bold">Trāṇa (तरण)</span>
+      </div>
+      <p className="premium-text-secondary text-sm">
+        Your Ultimate Travel Safety Companion
+      </p>
+      <p className="premium-text-secondary text-xs mt-2">
+        Powered by Advanced AI & Real-time Monitoring
+      </p>
+    </div>
+  </footer>
+);
 
-  // Temporary auth guard: ensure user is a tourist by checking localStorage token
-  const token = localStorage.getItem('authToken');
-  const userData = localStorage.getItem('userData');
-  if (!token || !userData) {
-    // Redirect to login if not authenticated
-    navigate('/login');
-    return null;
-  }
+const ModernDashboard = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [userData] = useState(getUserData());
+
+  const features = [
+    {
+      id: 'emergency',
+      icon: <FiAlertTriangle className="premium-text-gold" />,
+      title: t('dashboard.emergency', 'Emergency Alerts'),
+      desc: t('dashboard.emergencyDesc', 'Instant panic button with real-time alerts to authorities.'),
+      priority: 'CRITICAL',
+      stats: { value: '24/7', label: 'Monitoring' },
+      route: '/emergency'
+    },
+    {
+      id: 'analytics',
+      icon: <FiBarChart2 className="premium-text-gold" />,
+      title: t('dashboard.analytics', 'Analytics Dashboard'),
+      desc: t('dashboard.analyticsDesc', 'Comprehensive analytics and reporting with real-time insights.'),
+      priority: 'HIGH',
+      stats: { value: '95%', label: 'Accuracy' },
+      route: '/analytics'
+    },
+    {
+      id: 'tracking',
+      icon: <FiMapPin className="premium-text-gold" />,
+      title: t('dashboard.tracking', 'Location Tracking'),
+      desc: t('dashboard.trackingDesc', 'Real-time GPS tracking with geo-fence monitoring for safety.'),
+      priority: 'HIGH',
+      stats: { value: '24/7', label: 'Active' },
+      route: '/tracking'
+    },
+    {
+      id: 'translate',
+      icon: <FiGlobe className="premium-text-gold" />,
+      title: t('dashboard.translate', 'Language Support'),
+      desc: t('dashboard.translateDesc', 'Multi-language translation for seamless communication.'),
+      priority: 'MEDIUM',
+      stats: { value: '15+', label: 'Languages' },
+      route: '/translate'
+    },
+    {
+      id: 'ai-risk',
+      icon: <FiCpu className="premium-text-gold" />,
+      title: t('dashboard.aiRisk', 'AI Risk Assessment'),
+      desc: t('dashboard.aiRiskDesc', 'Machine learning algorithms for predictive safety analysis.'),
+      priority: 'HIGH',
+      stats: { value: 'AI', label: 'Powered' },
+      route: '/ai-risk'
+    },
+    {
+      id: 'qr-id',
+      icon: <FiUser className="premium-text-gold" />,
+      title: t('dashboard.qrId', 'QR Identification'),
+      desc: t('dashboard.qrIdDesc', 'Dynamic QR codes for quick identification by authorities.'),
+      priority: 'MEDIUM',
+      stats: { value: 'QR', label: 'Active' },
+      route: '/qr-id'
+    }
+  ];
 
   return (
-    <div className={`${dark ? 'bg-[#111827] text-white' : 'bg-white text-black'} min-h-screen py-12 px-8`}>
-      {/* Soft pastel blobs background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 opacity-30">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="g1" x1="0%" x2="100%">
-              <stop offset="0%" stopColor="#FEE2E2" />
-              <stop offset="100%" stopColor="#FEF3C7" />
-            </linearGradient>
-          </defs>
-          <rect x="5%" y="5%" width="30%" height="30%" rx="80" fill="url(#g1)" />
-          <rect x="60%" y="15%" width="28%" height="28%" rx="80" fill="#FEEBF0" />
-          <rect x="20%" y="60%" width="30%" height="24%" rx="80" fill="#EEF2FF" />
-        </svg>
-      </div>
-
-      {/* Top bar (clean, only dark toggle) */}
-      <div className="flex items-center justify-end mb-10">
-        <div>
-          <button
-            onClick={() => setDark(!dark)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md ${dark ? 'bg-yellow-500' : 'bg-[#111827]'}`}
-            aria-label="Toggle dark mode"
-          >
-            {dark ? <FiSun /> : <FiMoon />}
-          </button>
+    <div className="min-h-screen bg-gradient-aurora relative overflow-hidden">
+      <Navbar />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="text-center mb-12 premium-glass-enhanced p-8 rounded-3xl animate-slide-in">
+          <div className="w-20 h-20 premium-glass-enhanced rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <FiUser size={40} className="premium-text-gold" />
+          </div>
+          
+          <h1 className="text-5xl font-bold premium-text-bold mb-4">
+            Welcome to Trāṇa, Traveler!
+          </h1>
+          <p className="text-xl premium-text-secondary max-w-3xl mx-auto leading-relaxed">
+            Your safety is our priority. Monitor your location and stay connected.
+          </p>
+          
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <div className="premium-glass-enhanced px-4 py-2 rounded-2xl flex items-center space-x-2">
+              <FiAlertTriangle className="w-5 h-5 text-orange-400" />
+              <span className="premium-text text-sm">My Alerts: 2</span>
+            </div>
+            <div className="premium-glass-enhanced px-4 py-2 rounded-2xl flex items-center space-x-2">
+              <FiEye className="w-5 h-5 text-green-400" />
+              <span className="premium-text text-sm">My QR: Active</span>
+            </div>
+            <div className="premium-glass-enhanced px-4 py-2 rounded-2xl flex items-center space-x-2">
+              <FiMapPin className="w-5 h-5 text-yellow-400" />
+              <span className="premium-text text-sm">Safe Zones: 5</span>
+            </div>
+            <div className="premium-glass-enhanced px-4 py-2 rounded-2xl flex items-center space-x-2">
+              <FiActivity className="w-5 h-5 text-blue-400" />
+              <span className="premium-text text-sm">Status: Protected</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Welcome header */}
-  <div className="max-w-4xl mx-auto text-center mb-8">
-        <h1 className="text-2xl font-bold">Welcome back</h1>
-        <p className="text-gray-500 mt-2">Your safety dashboard — quick actions and a snapshot of your account</p>
-
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <div className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">Active Alerts: 2</div>
-          <div className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium">Safe Zones: 5</div>
-          <div className="px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-sm font-medium">QR Scans: 12</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {features.map((feature, index) => (
+            <div key={feature.id} style={{ animationDelay: `${index * 0.1}s` }}>
+              <PremiumFeatureCard
+                {...feature}
+                onClick={() => navigate(feature.route)}
+              />
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* Grid of feature cards: centered 3 columns x 2 rows */}
-      <div className="flex justify-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-[40px] gap-x-8">
-        <FeatureCard
-          onClick={() => navigate('/emergency')}
-          bgColor="bg-red-500 text-white"
-          icon={<FiAlertTriangle className="w-5 h-5" />}
-          title="Emergency Alerts"
-          desc="Instant panic button with real-time alerts to authorities and emergency contacts."
-        />
-
-        <FeatureCard
-          onClick={() => navigate('/analytics')}
-          bgColor="bg-orange-200 text-red-600"
-          icon={<FiBarChart2 className="w-5 h-5" />}
-          title="Analytics Dashboard"
-          desc="Comprehensive analytics and reporting for authorities to monitor trends and patterns."
-        />
-
-        <FeatureCard
-          onClick={() => navigate('/qr-id')}
-          bgColor="bg-orange-400 text-white"
-          icon={<FiGrid className="w-5 h-5" />}
-          title="QR Identification"
-          desc="Dynamic QR codes containing tourist information for quick identification by authorities."
-        />
-
-        <FeatureCard
-          onClick={() => navigate('/tracking')}
-          bgColor="bg-pink-300 text-white"
-          icon={<FiMapPin className="w-5 h-5" />}
-          title="Location Tracking"
-          desc="Real-time GPS tracking with geo-fence monitoring for restricted and safe zones."
-        />
-
-        <FeatureCard
-          onClick={() => navigate('/translate')}
-          bgColor="bg-blue-200 text-blue-700"
-          icon={<FiGlobe className="w-5 h-5" />}
-          title="Multi-language Support"
-          desc="Support for multiple languages to assist international tourists effectively."
-        />
-
-        <FeatureCard
-          onClick={() => navigate('/ai-risk')}
-          bgColor="bg-violet-200 text-violet-700"
-          icon={<FiCpu className="w-5 h-5" />}
-          title="AI Risk Assessment"
-          desc="Machine learning algorithms to predict and assess safety risks in real-time."
-        />
-        </div>
+        <PremiumFooter />
       </div>
     </div>
   );

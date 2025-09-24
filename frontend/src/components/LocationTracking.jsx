@@ -1,9 +1,9 @@
-// Enhanced Location Tracking Component with Geofencing, Heatmaps, and Live Tracking
+// Enhanced Location Tracking Component with Geofencing, Heatmaps, Live Tracking, and Nearby Places
 import React from 'react';
-import EnhancedLocationTracking from './EnhancedLocationTracking';
+import StableLocationTracking from './StableLocationTracking';
 
 const LocationTracking = () => {
-  return <EnhancedLocationTracking />;
+  return <StableLocationTracking />;
 };
 
 export default LocationTracking;

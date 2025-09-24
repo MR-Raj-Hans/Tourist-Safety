@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiMapPin, FiClock, FiAlertTriangle, FiShield } from 'react-icons/fi';
+import { FiUser, FiMapPin, FiClock, FiAlertTriangle, FiShield, FiFileText } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import PanicButton from '../components/PanicButton';
 import QRGenerator from '../components/QRGenerator';
 import MapView from '../components/MapView';
+import EFirModal from '../components/EFirModal';
 import { panicAPI, geoAPI, mlAPI } from '../services/api';
 import socketService from '../services/socket';
 import { toast } from 'react-toastify';
@@ -15,6 +16,7 @@ const TouristDashboard = () => {
   const [geoFences, setGeoFences] = useState([]);
   const [riskAssessment, setRiskAssessment] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEFirModalOpen, setIsEFirModalOpen] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -344,8 +346,28 @@ const TouristDashboard = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Emergency Alert Section */}
-          <div>
+          <div className="space-y-4">
             <PanicButton userLocation={userLocation} />
+            
+            {/* e-FIR Quick Access - Enhanced Visibility */}
+            <div className="bg-gradient-to-br from-red-500/20 to-orange-600/20 backdrop-blur-lg border-2 border-red-400/40 rounded-2xl p-6 shadow-2xl animate-pulse">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                <FiFileText className="text-red-400 text-2xl" />
+                🚨 EMERGENCY e-FIR REPORT
+              </h3>
+              <p className="text-white text-base font-medium mb-6">
+                File police reports instantly and securely! Fast emergency response system.
+              </p>
+              <button
+                onClick={() => {
+                  console.log('e-FIR button clicked!');
+                  setIsEFirModalOpen(true);
+                }}
+                className="w-full bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-2xl border-2 border-red-300 text-lg"
+              >
+                🚨 FILE e-FIR REPORT NOW 🚨
+              </button>
+            </div>
           </div>
 
           {/* QR Code Section */}
@@ -428,6 +450,13 @@ const TouristDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* e-FIR Modal */}
+      <EFirModal 
+        isOpen={isEFirModalOpen}
+        onClose={() => setIsEFirModalOpen(false)}
+        userLocation={userLocation}
+      />
     </div>
   );
 };

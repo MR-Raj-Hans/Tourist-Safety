@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Components
 import Navbar from './components/Navbar';
+import ThemeToggle from './components/ThemeToggle';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Pages
 import LoginSelection from './pages/LoginSelection';
@@ -235,11 +237,11 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        
-        <Routes>
+    <ThemeProvider>
+      <Router>
+        <div className="App">
+          
+          <Routes>
           {/* Public Routes */}
           <Route 
             path="/" 
@@ -371,6 +373,7 @@ function App() {
         />
       </div>
     </Router>
+    </ThemeProvider>
   );
 }
 

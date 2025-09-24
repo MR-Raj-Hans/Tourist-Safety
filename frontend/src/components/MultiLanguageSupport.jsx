@@ -1,273 +1,443 @@
 import React, { useState, useEffect } from 'react';
-import { FiGlobe, FiMessageCircle, FiMic, FiVolume2, FiRefreshCw, FiCheck, FiSend, FiHeart, FiUsers, FiMap } from 'react-icons/fi';
+import { FiGlobe, FiMessageCircle, FiMic, FiVolume2, FiRefreshCw, FiCheck, FiSend, FiHeart, FiUsers, FiMap, FiArrowRight, FiSearch, FiZap } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
+import { translate, detectLanguage, getLanguages } from '../services/api';
+import Navbar from './Navbar';
 
 const MultiLanguageSupport = () => {
   const { t, i18n } = useTranslation();
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [selectedSourceLanguage, setSelectedSourceLanguage] = useState('auto');
+  const [selectedTargetLanguage, setSelectedTargetLanguage] = useState('en');
   const [isTranslating, setIsTranslating] = useState(false);
   const [conversation, setConversation] = useState([]);
   const [inputText, setInputText] = useState('');
-  const [globeRotation, setGlobeRotation] = useState(0);
+  const [detectedLanguage, setDetectedLanguage] = useState(null);
   const [isListening, setIsListening] = useState(false);
-  const [connectionPulse, setConnectionPulse] = useState(0);
+  const [translationHistory, setTranslationHistory] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredLanguages, setFilteredLanguages] = useState([]);
 
-  // Reduced language set: keep a concise, useful subset
+  // Comprehensive language list with Indian languages prioritized
   const languages = [
+    { code: 'auto', name: 'Auto Detect', flag: '🔍', nativeName: 'Auto Detect', popularity: 100 },
     { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English', popularity: 95 },
+    { code: 'hi', name: 'Hindi', flag: '🇮🇳', nativeName: 'हिन्दी', popularity: 90 },
+    { code: 'kn', name: 'Kannada', flag: '🇮🇳', nativeName: 'ಕನ್ನಡ', popularity: 85 },
+    { code: 'gu', name: 'Gujarati', flag: '🇮🇳', nativeName: 'ગુજરાતી', popularity: 82 },
+    { code: 'te', name: 'Telugu', flag: '🇮🇳', nativeName: 'తెలుగు', popularity: 80 },
+    { code: 'bh', name: 'Bihari', flag: '🇮🇳', nativeName: 'भोजपुरी', popularity: 75 },
+    { code: 'bn', name: 'Bengali', flag: '🇮🇳', nativeName: 'বাংলা', popularity: 88 },
+    { code: 'ta', name: 'Tamil', flag: '🇮🇳', nativeName: 'தமிழ்', popularity: 85 },
+    { code: 'ml', name: 'Malayalam', flag: '🇮🇳', nativeName: 'മലയാളം', popularity: 78 },
+    { code: 'mr', name: 'Marathi', flag: '🇮🇳', nativeName: 'मराठी', popularity: 83 },
+    { code: 'pa', name: 'Punjabi', flag: '🇮🇳', nativeName: 'ਪੰਜਾਬੀ', popularity: 77 },
+    { code: 'or', name: 'Odia', flag: '🇮🇳', nativeName: 'ଓଡ଼ିଆ', popularity: 70 },
+    { code: 'as', name: 'Assamese', flag: '🇮🇳', nativeName: 'অসমীয়া', popularity: 68 },
     { code: 'es', name: 'Spanish', flag: '🇪🇸', nativeName: 'Español', popularity: 85 },
     { code: 'fr', name: 'French', flag: '🇫🇷', nativeName: 'Français', popularity: 75 },
+    { code: 'de', name: 'German', flag: '🇩🇪', nativeName: 'Deutsch', popularity: 70 },
+    { code: 'it', name: 'Italian', flag: '🇮🇹', nativeName: 'Italiano', popularity: 65 },
+    { code: 'pt', name: 'Portuguese', flag: '🇵🇹', nativeName: 'Português', popularity: 68 },
+    { code: 'ru', name: 'Russian', flag: '🇷🇺', nativeName: 'Русский', popularity: 72 },
+    { code: 'ja', name: 'Japanese', flag: '🇯🇵', nativeName: '日本語', popularity: 78 },
+    { code: 'ko', name: 'Korean', flag: '🇰🇷', nativeName: '한국어', popularity: 70 },
     { code: 'zh', name: 'Chinese', flag: '🇨🇳', nativeName: '中文', popularity: 90 },
-    { code: 'hi', name: 'Hindi', flag: '🇮🇳', nativeName: 'हिन्दी', popularity: 80 }
+    { code: 'ar', name: 'Arabic', flag: '🇸🇦', nativeName: 'العربية', popularity: 77 },
+    { code: 'th', name: 'Thai', flag: '🇹🇭', nativeName: 'ไทย', popularity: 60 },
+    { code: 'vi', name: 'Vietnamese', flag: '🇻🇳', nativeName: 'Tiếng Việt', popularity: 62 },
+    { code: 'nl', name: 'Dutch', flag: '🇳🇱', nativeName: 'Nederlands', popularity: 58 },
+    { code: 'sv', name: 'Swedish', flag: '🇸🇪', nativeName: 'Svenska', popularity: 55 },
+    { code: 'no', name: 'Norwegian', flag: '🇳🇴', nativeName: 'Norsk', popularity: 53 },
+    { code: 'da', name: 'Danish', flag: '🇩🇰', nativeName: 'Dansk', popularity: 52 },
+    { code: 'fi', name: 'Finnish', flag: '🇫🇮', nativeName: 'Suomi', popularity: 51 }
   ];
 
-  // Sample conversations for different scenarios
-  const sampleMessages = [
+  // Enhanced sample phrases with more languages and Indian context
+  const quickPhrases = [
     {
-      type: 'emergency',
-      original: 'I need help, where is the nearest hospital?',
-      translated: 'Necesito ayuda, ¿dónde está el hospital más cercano?',
-      category: 'Emergency'
+      category: 'Emergency',
+      icon: '🚨',
+      phrases: [
+        'I need help immediately!',
+        'Where is the nearest hospital?',
+        'Please call the police!',
+        'I am lost and need directions.',
+        'Can you help me find a doctor?'
+      ]
     },
     {
-      type: 'direction',
-      original: 'How do I get to the main tourist area?',
-      translated: 'Comment puis-je me rendre à la zone touristique principale?',
-      category: 'Navigation'
+      category: 'Directions',
+      icon: '🗺️',
+      phrases: [
+        'How do I get to the airport?',
+        'Where is the train station?',
+        'Can you show me on the map?',
+        'Is this the right way to downtown?',
+        'Where is the nearest auto-rickshaw stand?'
+      ]
     },
     {
-      type: 'food',
-      original: 'Can you recommend a good local restaurant?',
-      translated: 'Können Sie ein gutes lokales Restaurant empfehlen?',
-      category: 'Dining'
+      category: 'Food & Dining',
+      icon: '🍽️',
+      phrases: [
+        'Can I see the menu please?',
+        'I have food allergies.',
+        'The bill, please.',
+        'Do you have vegetarian options?',
+        'Is this spicy?'
+      ]
+    },
+    {
+      category: 'Accommodation',
+      icon: '🏨',
+      phrases: [
+        'I have a reservation.',
+        'What time is check-out?',
+        'Can I get a wake-up call?',
+        'Is breakfast included?',
+        'Do you have WiFi?'
+      ]
+    },
+    {
+      category: 'Indian Greetings',
+      icon: '🙏',
+      phrases: [
+        'Namaste, how are you?',
+        'Thank you very much',
+        'Excuse me, can you help?',
+        'Nice to meet you',
+        'Have a good day'
+      ]
     }
   ];
 
+  // Real translation using the backend API
+  const translateText = async (text, sourceLang, targetLang) => {
+    setIsTranslating(true);
+    
+    try {
+      // Use the real translation API
+      const result = await translate(text, sourceLang, targetLang);
+      
+      if (result.success) {
+        setDetectedLanguage(result.detectedSourceLanguage);
+        setIsTranslating(false);
+        return {
+          translatedText: result.translatedText,
+          detectedSourceLanguage: result.detectedSourceLanguage,
+          confidence: result.confidence || 0.9
+        };
+      } else {
+        throw new Error(result.error || 'Translation failed');
+      }
+      
+    } catch (error) {
+      setIsTranslating(false);
+      console.error('Translation error:', error);
+      return {
+        translatedText: `❌ Translation failed: ${error.message}`,
+        detectedSourceLanguage: sourceLang,
+        confidence: 0,
+        error: error.message
+      };
+    }
+  };
+
   // Globe animation
-  useEffect(() => {
-    const globeInterval = setInterval(() => {
-      setGlobeRotation(prev => (prev + 1) % 360);
-      setConnectionPulse(prev => (prev + 1) % 100);
-    }, 50);
-
-    return () => clearInterval(globeInterval);
-  }, []);
-
   // Initialize with sample conversation
   useEffect(() => {
     const initialMessages = [
       {
         id: 1,
-        type: 'received',
-        original: 'Hello! How can I help you today?',
-        translated: '¡Hola! ¿Cómo puedo ayudarte hoy?',
-        timestamp: new Date(Date.now() - 300000).toLocaleTimeString(),
-        language: 'es'
-      },
-      {
-        id: 2,
-        type: 'sent',
-        original: 'I would like to find a good restaurant nearby.',
-        translated: 'Me gustaría encontrar un buen restaurante cerca.',
-        timestamp: new Date(Date.now() - 240000).toLocaleTimeString(),
-        language: 'es'
+        type: 'system',
+        original: 'Welcome to Universal Translator! Type a message to translate.',
+        translated: '',
+        timestamp: new Date().toLocaleTimeString(),
+        sourceLang: 'en',
+        targetLang: selectedTargetLanguage
       }
     ];
     setConversation(initialMessages);
   }, []);
 
-  const translateMessage = async (text, targetLang) => {
-    setIsTranslating(true);
-    
-    // Simulate translation API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Mock translations (in real app, this would call a translation API)
-    const mockTranslations = {
-      'Thank you for your help!': {
-        'es': '¡Gracias por tu ayuda!',
-        'fr': 'Merci pour votre aide!',
-        'de': 'Vielen Dank für Ihre Hilfe!',
-        'it': 'Grazie per il tuo aiuto!',
-        'pt': 'Obrigado pela sua ajuda!',
-        'ru': 'Спасибо за вашу помощь!',
-        'ja': 'ご協力ありがとうございます！',
-        'ko': '도움을 주셔서 감사합니다!',
-        'zh': '谢谢你的帮助！',
-        'ar': 'شكرا لك على مساعدتك!',
-        'hi': 'आपकी सहायता के लिए धन्यवाद!'
-      }
-    };
-    
-    const translation = mockTranslations[text]?.[targetLang] || `[${targetLang.toUpperCase()}] ${text}`;
-    setIsTranslating(false);
-    
-    return translation;
-  };
-
   const sendMessage = async () => {
     if (!inputText.trim()) return;
     
-    const currentLang = languages.find(lang => lang.code === selectedLanguage);
-    const translation = await translateMessage(inputText, selectedLanguage);
-    
-    const newMessage = {
-      id: conversation.length + 1,
+    // Add user message to conversation (right side)
+    const userMessage = {
+      id: Date.now(),
       type: 'sent',
       original: inputText,
-      translated: translation,
       timestamp: new Date().toLocaleTimeString(),
-      language: selectedLanguage
+      sourceLang: selectedSourceLanguage,
+      targetLang: selectedTargetLanguage,
+      showOriginalOnly: true // Only show original text for user message
     };
     
-    setConversation(prev => [...prev, newMessage]);
+    setConversation(prev => [...prev, userMessage]);
+    const currentInput = inputText;
     setInputText('');
     
-    // Simulate response
-    setTimeout(async () => {
-      const responseText = 'Thank you for your message! I understand and will help you.';
-      const responseTranslation = await translateMessage(responseText, selectedLanguage);
+    // Perform translation
+    try {
+      const result = await translateText(currentInput, selectedSourceLanguage, selectedTargetLanguage);
       
-      const response = {
-        id: conversation.length + 2,
+      // Add translation as a separate message on the opposite side (left side)
+      const translationMessage = {
+        id: Date.now() + 1,
         type: 'received',
-        original: responseText,
-        translated: responseTranslation,
+        original: result.translatedText,
         timestamp: new Date().toLocaleTimeString(),
-        language: selectedLanguage
+        sourceLang: result.detectedSourceLanguage,
+        targetLang: selectedTargetLanguage,
+        confidence: result.confidence,
+        isTranslation: true,
+        originalMessage: currentInput,
+        showTranslationOnly: true // Only show translated text for bot message
       };
+
+      // Add translation message with a slight delay for better UX
+      setTimeout(() => {
+        setConversation(prev => [...prev, translationMessage]);
+      }, 500);
+
+      // Add to translation history
+      setTranslationHistory(prev => [...prev.slice(-9), {
+        original: currentInput,
+        translated: result.translatedText,
+        sourceLang: result.detectedSourceLanguage,
+        targetLang: selectedTargetLanguage,
+        timestamp: new Date().toLocaleTimeString()
+      }]);
+
+    } catch (error) {
+      console.error('Translation error:', error);
       
-      setConversation(prev => [...prev, response]);
-    }, 2000);
+      // Add error message on the left side
+      const errorMessage = {
+        id: Date.now() + 1,
+        type: 'received',
+        original: `❌ Translation failed: ${error.message}`,
+        timestamp: new Date().toLocaleTimeString(),
+        sourceLang: selectedSourceLanguage,
+        targetLang: selectedTargetLanguage,
+        isError: true
+      };
+
+      setTimeout(() => {
+        setConversation(prev => [...prev, errorMessage]);
+      }, 500);
+    }
   };
 
-  const handleLanguageChange = (langCode) => {
-    setSelectedLanguage(langCode);
-    i18n.changeLanguage(langCode);
+  const handleQuickPhrase = async (phrase) => {
+    setInputText(phrase);
+    // Auto-send after a short delay
+    setTimeout(() => {
+      if (phrase === inputText) {
+        sendMessage();
+      }
+    }, 100);
   };
 
   const startVoiceInput = () => {
     setIsListening(true);
-    // Simulate voice input
+    // Simulate voice input with random phrases
+    const voicePhrases = [
+      'Where is the nearest metro station?',
+      'Can you help me find a taxi?',
+      'I need directions to the hotel.',
+      'What time does the museum close?'
+    ];
+    
     setTimeout(() => {
-      setInputText('Where is the nearest metro station?');
+      const randomPhrase = voicePhrases[Math.floor(Math.random() * voicePhrases.length)];
+      setInputText(randomPhrase);
       setIsListening(false);
     }, 3000);
   };
 
-  const getSelectedLanguage = () => {
-    return languages.find(lang => lang.code === selectedLanguage) || languages[0];
+  const getLanguageByCode = (code) => {
+    return languages.find(lang => lang.code === code) || languages[1]; // fallback to English
+  };
+
+  const swapLanguages = () => {
+    if (selectedSourceLanguage !== 'auto') {
+      setSelectedSourceLanguage(selectedTargetLanguage);
+      setSelectedTargetLanguage(selectedSourceLanguage);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <Navbar />
       
-      {/* Warm Header */}
-      <div className="bg-gradient-to-r from-yellow-400/20 via-white/80 to-blue-400/20 backdrop-blur-xl border-b border-yellow-200/50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                {/* Animated Globe */}
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <FiGlobe 
-                    className="w-6 h-6 text-white" 
-                    style={{ transform: `rotate(${globeRotation}deg)` }}
-                  />
-                </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-              </div>
-              
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-blue-600 bg-clip-text text-transparent">
-                  Universal Translator
-                </h1>
-                <p className="text-gray-600">Breaking language barriers worldwide</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-2">
-                <FiUsers className="w-4 h-4 text-blue-500" />
-                <span className="text-blue-600 text-sm">Connected to 124 languages</span>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-green-600 text-sm font-medium">Online</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="relative z-10 text-white">
+
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-4 gap-6">
           
-          {/* Language Selector */}
+          {/* Language Selector Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-yellow-200/50 shadow-xl p-6 sticky top-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center">
-                <FiGlobe className="w-5 h-5 text-yellow-500 mr-2" />
-                Select Language
-              </h3>
+            <div className="bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-gray-700/50 shadow-xl p-6 sticky top-6">
               
-              {/* Featured Languages */}
-              <div className="space-y-3 mb-6">
-                {languages.slice(0, 6).map(lang => (
-                  <button
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
-                    className={`w-full p-3 rounded-xl border-2 transition-all duration-300 ${
-                      selectedLanguage === lang.code
-                        ? 'border-yellow-400 bg-gradient-to-r from-yellow-50 to-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-yellow-300 bg-white/50'
-                    }`}
+              {/* Online Status */}
+              <div className="flex items-center justify-center space-x-2 mb-6 p-2 bg-green-900/30 border border-green-500/30 rounded-xl">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-400 text-sm font-medium">Translation Service Online</span>
+              </div>
+              
+              {/* Source Language Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center">
+                  <FiSearch className="w-5 h-5 text-blue-400 mr-2" />
+                  From
+                </h3>
+                
+                <div className="relative">
+                  <select
+                    value={selectedSourceLanguage}
+                    onChange={(e) => setSelectedSourceLanguage(e.target.value)}
+                    className="w-full p-3 border border-gray-600 rounded-xl bg-gray-700/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white appearance-none custom-scroll"
                   >
-                    <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{lang.flag}</span>
-                      <div className="text-left flex-1">
-                        <div className="font-semibold text-gray-800">{lang.name}</div>
-                        <div className="text-sm text-gray-600">{lang.nativeName}</div>
-                      </div>
-                      {selectedLanguage === lang.code && (
-                        <FiCheck className="w-5 h-5 text-yellow-500" />
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-              
-              {/* All Languages Dropdown */}
-              <div className="border-t border-gray-200 pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">All Languages</label>
-                <select
-                  value={selectedLanguage}
-                  onChange={(e) => handleLanguageChange(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-xl bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                >
-                  {languages.map(lang => (
-                    <option key={lang.code} value={lang.code}>
-                      {lang.flag} {lang.name} ({lang.nativeName})
+                    <option value="auto" className="bg-gray-800 text-yellow-400 font-semibold">
+                      🔍 Auto Detect (Recommended)
                     </option>
-                  ))}
-                </select>
+                    <optgroup label="🇮🇳 Popular Indian Languages" className="bg-gray-800 text-blue-400 font-semibold">
+                      {languages.filter(lang => ['en', 'hi', 'kn', 'te', 'bn', 'ta', 'mr', 'gu', 'ml', 'pa'].includes(lang.code)).map(lang => (
+                        <option key={lang.code} value={lang.code} className="bg-gray-800 text-white py-1">
+                          {lang.flag} {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🌍 All Supported Languages" className="bg-gray-800 text-green-400 font-semibold">
+                      {languages.filter(lang => lang.code !== 'auto').map(lang => (
+                        <option key={lang.code} value={lang.code} className="bg-gray-800 text-white py-1">
+                          {lang.flag} {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <FiArrowRight className="w-4 h-4 text-gray-400 rotate-90" />
+                  </div>
+                </div>
               </div>
               
-              {/* Language Stats */}
-              <div className="mt-6 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-xl p-4">
-                <h4 className="font-semibold text-gray-800 mb-2">Language Info</h4>
+              {/* Language Swap Button */}
+              <div className="flex justify-center my-4">
+                <button 
+                  onClick={swapLanguages}
+                  className="p-3 bg-gray-700 hover:bg-gray-600 rounded-xl transition-colors border border-gray-600"
+                  disabled={selectedSourceLanguage === 'auto'}
+                  title="Swap Languages"
+                >
+                  <FiArrowRight className="w-5 h-5 text-white rotate-90" />
+                </button>
+              </div>
+              
+              {/* Language Detection Status */}
+              {detectedLanguage && (
+                <div className="mb-4 p-3 bg-green-900/30 border border-green-500/30 rounded-xl">
+                  <div className="flex items-center space-x-2 text-green-400">
+                    <FiSearch className="w-4 h-4" />
+                    <span className="text-sm">Detected: {getLanguageByCode(detectedLanguage).name}</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className="border-t border-white/20 my-6"></div>
+              
+              {/* Target Language Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center">
+                  <FiGlobe className="w-5 h-5 text-green-400 mr-2" />
+                  To
+                </h3>
+                
+                {/* Popular Target Languages */}
+                <div className="space-y-2 mb-4">
+                  {languages.slice(1, 6).map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => setSelectedTargetLanguage(lang.code)}
+                      className={`w-full p-3 rounded-xl border-2 transition-all duration-300 ${
+                        selectedTargetLanguage === lang.code
+                          ? 'border-yellow-400 premium-glass-enhanced shadow-lg'
+                          : 'border-white/30 hover:border-yellow-300 premium-glass-enhanced'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <span className="text-xl">{lang.flag}</span>
+                        <div className="text-left flex-1">
+                          <div className="font-medium premium-text">{lang.name}</div>
+                          <div className="text-xs premium-text opacity-70">{lang.nativeName}</div>
+                        </div>
+                        {selectedTargetLanguage === lang.code && (
+                          <FiCheck className="w-4 h-4 premium-text-gold" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                
+                {/* All Languages Dropdown with Smooth Scrolling */}
+                <div className="relative">
+                  <select
+                    value={selectedTargetLanguage}
+                    onChange={(e) => setSelectedTargetLanguage(e.target.value)}
+                    className="w-full p-3 border border-white/30 rounded-xl bg-gray-800/80 backdrop-blur-sm focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white appearance-none custom-scroll"
+                    style={{ maxHeight: '200px' }}
+                  >
+                    <optgroup label="🇮🇳 Indian Languages" className="bg-gray-800 text-yellow-400 font-semibold">
+                      {languages.filter(lang => lang.region === 'India').map(lang => (
+                        <option key={lang.code} value={lang.code} className="bg-gray-800 text-white py-1">
+                          {lang.flag} {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🌍 Global Languages" className="bg-gray-800 text-blue-400 font-semibold">
+                      {languages.filter(lang => lang.region && !['India', 'System'].includes(lang.region)).slice(0, 15).map(lang => (
+                        <option key={lang.code} value={lang.code} className="bg-gray-800 text-white py-1">
+                          {lang.flag} {lang.name} ({lang.nativeName})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🌏 All Languages" className="bg-gray-800 text-green-400 font-semibold">
+                      {languages.filter(lang => lang.code !== 'auto').map(lang => (
+                        <option key={lang.code} value={lang.code} className="bg-gray-800 text-white py-1">
+                          {lang.flag} {lang.name} ({lang.nativeName}) - {lang.region}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <FiArrowRight className="w-4 h-4 text-gray-400 rotate-90" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Translation Stats */}
+              <div className="premium-glass-enhanced rounded-xl p-4 border border-white/30">
+                <h4 className="font-semibold premium-text-bold mb-3">Translation Info</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Popularity:</span>
-                    <span className="text-blue-600 font-medium">{getSelectedLanguage().popularity}%</span>
+                    <span className="premium-text opacity-80">Total Translations:</span>
+                    <span className="premium-text-gold font-medium">{translationHistory.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Native Name:</span>
-                    <span className="text-purple-600 font-medium">{getSelectedLanguage().nativeName}</span>
+                    <span className="premium-text opacity-80">Target Language:</span>
+                    <span className="premium-text-gold font-medium">{getLanguageByCode(selectedTargetLanguage).nativeName}</span>
                   </div>
+                  {detectedLanguage && (
+                    <div className="flex justify-between">
+                      <span className="premium-text opacity-80">Last Detected:</span>
+                      <span className="text-green-300 font-medium">{getLanguageByCode(detectedLanguage).name}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -277,87 +447,193 @@ const MultiLanguageSupport = () => {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Chat Container */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-blue-200/50 shadow-xl overflow-hidden">
+            <div className="premium-glass-enhanced backdrop-blur-xl rounded-3xl border border-white/30 shadow-xl overflow-hidden">
               
-              {/* Chat Header */}
-              <div className="bg-gradient-to-r from-yellow-100 to-blue-100 p-4 border-b border-gray-200/50">
+              {/* Chat Header with Enhanced Info */}
+              <div className="premium-glass-enhanced p-4 border-b border-white/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-blue-500 rounded-full flex items-center justify-center">
                       <FiMessageCircle className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-800">Live Translation Chat</h3>
-                      <p className="text-sm text-gray-600">
-                        Translating to {getSelectedLanguage().nativeName}
+                      <h3 className="font-bold premium-text-bold">Smart Translation Chat</h3>
+                      <p className="text-sm premium-text flex items-center space-x-2">
+                        <span>Auto-detecting from</span>
+                        <span className="font-medium premium-text-gold">
+                          {getLanguageByCode(selectedSourceLanguage).name}
+                        </span>
+                        <FiArrowRight className="w-3 h-3" />
+                        <span className="font-medium premium-text-gold">
+                          {getLanguageByCode(selectedTargetLanguage).nativeName}
+                        </span>
                       </p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-3">
                     {isTranslating && (
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin">
-                          <FiRefreshCw className="w-4 h-4 text-blue-500" />
+                          <FiRefreshCw className="w-4 h-4 premium-text-gold" />
                         </div>
-                        <span className="text-sm text-blue-600">Translating...</span>
+                        <span className="text-sm premium-text-gold">Translating...</span>
                       </div>
                     )}
+                    
+                    <div className="text-xs premium-text opacity-70">
+                      {conversation.length - 1} messages
+                    </div>
                   </div>
                 </div>
               </div>
               
-              {/* Messages */}
-              <div className="h-96 overflow-y-auto p-4 space-y-4">
+              {/* Enhanced Messages with Custom Scrolling */}
+              <div className="h-96 overflow-y-auto p-4 space-y-4 custom-scroll">
                 {conversation.map(message => (
                   <div
                     key={message.id}
-                    className={`flex ${message.type === 'sent' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${
+                      message.type === 'sent' ? 'justify-end' : 
+                      message.type === 'system' ? 'justify-center' : 'justify-start'
+                    }`}
                   >
                     <div className={`max-w-xs lg:max-w-md ${
                       message.type === 'sent' 
                         ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white' 
+                        : message.type === 'system'
+                        ? 'bg-gray-100 text-gray-600 text-center'
+                        : message.isTranslation
+                        ? 'bg-gradient-to-r from-blue-400 to-blue-500 text-white'
+                        : message.isError
+                        ? 'bg-gradient-to-r from-red-400 to-red-500 text-white'
                         : 'bg-white border border-gray-200'
-                    } rounded-2xl p-4 shadow-lg`}>
+                    } rounded-2xl p-4 shadow-lg relative`}>
                       
-                      {/* Original Message */}
-                      <div className="mb-2">
-                        <p className={`font-medium ${message.type === 'sent' ? 'text-white' : 'text-gray-800'}`}>
-                          {message.original}
-                        </p>
-                      </div>
+                      {message.type === 'system' && (
+                        <p className="text-sm">{message.original}</p>
+                      )}
                       
-                      {/* Translation */}
-                      <div className="border-t border-opacity-30 pt-2">
-                        <p className={`text-sm italic ${message.type === 'sent' ? 'text-yellow-100' : 'text-blue-600'}`}>
-                          {message.translated}
-                        </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className={`text-xs ${message.type === 'sent' ? 'text-yellow-200' : 'text-gray-500'}`}>
-                            {message.timestamp}
-                          </span>
-                          <div className="flex items-center space-x-1">
-                            <span className="text-lg">
-                              {languages.find(l => l.code === message.language)?.flag}
-                            </span>
+                      {message.type === 'sent' && (
+                        <>
+                          {/* User message - show original only */}
+                          <div className="mb-2">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-medium text-yellow-100">
+                                You ({getLanguageByCode(message.sourceLang).name})
+                              </span>
+                              <span className="text-lg">
+                                {getLanguageByCode(message.sourceLang).flag}
+                              </span>
+                            </div>
+                            <p className="font-medium text-white text-lg">
+                              {message.original}
+                            </p>
                           </div>
-                        </div>
-                      </div>
+                          
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-yellow-200">
+                              {message.timestamp}
+                            </span>
+                            <div className="flex items-center space-x-1 text-xs text-yellow-200">
+                              <FiSend className="w-3 h-3" />
+                              <span>Sent</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      
+                      {message.type === 'received' && (
+                        <>
+                          {/* Translation message - show translation only */}
+                          <div className="mb-2">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className={`text-xs font-medium ${
+                                message.isTranslation ? 'text-blue-100' : 
+                                message.isError ? 'text-red-100' : 'text-gray-500'
+                              }`}>
+                                {message.isTranslation 
+                                  ? `Translation (${getLanguageByCode(message.targetLang).name})`
+                                  : message.isError 
+                                  ? 'Error'
+                                  : 'Assistant'
+                                }
+                              </span>
+                              <div className="flex items-center space-x-2">
+                                {message.confidence && (
+                                  <span className="text-xs text-blue-200">
+                                    {Math.round(message.confidence * 100)}% confident
+                                  </span>
+                                )}
+                                <span className="text-lg">
+                                  {message.isTranslation 
+                                    ? getLanguageByCode(message.targetLang).flag
+                                    : message.isError
+                                    ? '❌'
+                                    : '🤖'
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                            <p className={`font-medium text-lg ${
+                              message.isTranslation ? 'text-white' :
+                              message.isError ? 'text-white' : 'text-gray-800'
+                            }`}>
+                              {message.original}
+                            </p>
+                            
+                            {message.isTranslation && message.originalMessage && (
+                              <div className="mt-2 pt-2 border-t border-blue-300 border-opacity-30">
+                                <span className="text-xs text-blue-200 italic">
+                                  Translated from: "{message.originalMessage}"
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center justify-between mt-2">
+                            <span className={`text-xs ${
+                              message.isTranslation ? 'text-blue-200' : 
+                              message.isError ? 'text-red-200' : 'text-gray-500'
+                            }`}>
+                              {message.timestamp}
+                            </span>
+                            <div className={`flex items-center space-x-1 text-xs ${
+                              message.isTranslation ? 'text-blue-200' : 
+                              message.isError ? 'text-red-200' : 'text-gray-500'
+                            }`}>
+                              {message.isTranslation && (
+                                <>
+                                  <FiGlobe className="w-3 h-3" />
+                                  <span>Translated</span>
+                                </>
+                              )}
+                              {message.isError && (
+                                <>
+                                  <FiRefreshCw className="w-3 h-3" />
+                                  <span>Failed</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
               
-              {/* Input Area */}
+              {/* Enhanced Input Area */}
               <div className="border-t border-gray-200/50 p-4">
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={startVoiceInput}
                     className={`p-3 rounded-xl border-2 transition-all duration-300 ${
                       isListening
-                        ? 'border-red-400 bg-red-50 text-red-600'
+                        ? 'border-red-400 bg-red-50 text-red-600 animate-pulse'
                         : 'border-gray-300 hover:border-blue-400 text-gray-600'
                     }`}
+                    title="Voice Input"
                   >
                     <FiMic className="w-5 h-5" />
                   </button>
@@ -368,55 +644,82 @@ const MultiLanguageSupport = () => {
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                      placeholder="Type your message..."
-                      className="w-full p-3 border border-gray-300 rounded-xl bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                      placeholder={`Type in ${getLanguageByCode(selectedSourceLanguage).name}...`}
+                      className="w-full p-3 pr-20 border border-gray-300 rounded-xl bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                     />
                     {isListening && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                      <div className="absolute right-12 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                        <div className="w-1 h-1 bg-red-400 rounded-full animate-ping"></div>
+                        <div className="w-1 h-1 bg-red-400 rounded-full animate-ping" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-1 h-1 bg-red-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
                       </div>
                     )}
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                      {inputText.length}/500
+                    </div>
                   </div>
                   
                   <button
                     onClick={sendMessage}
                     disabled={!inputText.trim() || isTranslating}
-                    className="p-3 bg-gradient-to-r from-yellow-400 to-blue-500 hover:from-yellow-500 hover:to-blue-600 text-white rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-3 bg-gradient-to-r from-yellow-400 to-blue-500 hover:from-yellow-500 hover:to-blue-600 text-white rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                    title="Send & Translate"
                   >
                     <FiSend className="w-5 h-5" />
                   </button>
                 </div>
+                
+                {/* Language Detection Preview */}
+                {inputText.length > 3 && (
+                  <div className="mt-2 text-xs text-gray-600 flex items-center space-x-2">
+                    <FiSearch className="w-3 h-3 text-green-500" />
+                    <span>Will auto-detect language and translate to {getLanguageByCode(selectedTargetLanguage).name}</span>
+                  </div>
+                )}
               </div>
             </div>
             
-            {/* Quick Phrases */}
+            {/* Enhanced Quick Phrases */}
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-purple-200/50 shadow-xl p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
                 <FiHeart className="w-5 h-5 text-pink-500 mr-2" />
                 Quick Travel Phrases
               </h3>
               
-              <div className="grid md:grid-cols-3 gap-4">
-                {sampleMessages.map((sample, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setInputText(sample.original)}
-                    className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-200 rounded-xl transition-all duration-300 text-left group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-purple-600 uppercase">
-                        {sample.category}
-                      </span>
-                      <FiMap className="w-4 h-4 text-purple-400 group-hover:text-purple-600" />
+              <div className="grid gap-6">
+                {quickPhrases.map((category, categoryIndex) => (
+                  <div key={categoryIndex}>
+                    <h4 className="text-md font-semibold text-gray-700 mb-3 flex items-center">
+                      <span className="text-lg mr-2">{category.icon}</span>
+                      {category.category}
+                    </h4>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {category.phrases.map((phrase, phraseIndex) => (
+                        <button
+                          key={phraseIndex}
+                          onClick={() => handleQuickPhrase(phrase)}
+                          className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-200 rounded-xl transition-all duration-300 text-left group"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-purple-600 uppercase">
+                              Quick Phrase
+                            </span>
+                            <FiZap className="w-3 h-3 text-purple-400 group-hover:text-purple-600" />
+                          </div>
+                          <p className="text-sm text-gray-700 font-medium">{phrase}</p>
+                          <p className="text-xs text-purple-600 italic mt-1">
+                            Click to translate to {getLanguageByCode(selectedTargetLanguage).name}
+                          </p>
+                        </button>
+                      ))}
                     </div>
-                    <p className="text-sm text-gray-700 font-medium mb-2">{sample.original}</p>
-                    <p className="text-xs text-purple-600 italic">{sample.translated}</p>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

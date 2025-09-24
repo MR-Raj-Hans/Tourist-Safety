@@ -13,9 +13,17 @@ const qrRoutes = require('./routes/qr');
 const geoRoutes = require('./routes/geo');
 const touristRoutes = require('./routes/tourists');
 const devRoutes = require('./routes/dev');
+const osmRoutes = require('./routes/osm');
+const weatherRoutes = require('./routes/weather');
+const trafficRoutes = require('./routes/traffic');
+const transportRoutes = require('./routes/transport');
+const analyticsRoutes = require('./routes/analytics');
+const translateRoutes = require('./routes/translate');
+const karnatakaAIRoutes = require('./routes/karnatakaAI');
 
 // Import database connection
 const db = require('./db');
+const timeout = require('./middleware/timeout');
 
 const app = express();
 const server = createServer(app);
@@ -28,6 +36,7 @@ const io = new Server(server, {
 
 // Middleware
 // app.use(helmet());
+app.use(timeout(30000)); // 30 second timeout for all requests
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -73,6 +82,13 @@ app.use('/api/panic', panicRoutes);
 app.use('/api/qr', qrRoutes);
 app.use('/api/geo', geoRoutes);
 app.use('/api/tourists', touristRoutes);
+app.use('/api/osm', osmRoutes);
+app.use('/api/weather', weatherRoutes);
+app.use('/api/traffic', trafficRoutes);
+app.use('/api/transport', transportRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/karnataka', karnatakaAIRoutes);
+app.use('/api/translate', translateRoutes);
 
 // Mount development-only routes only when explicitly enabled in development
 // To enable: set NODE_ENV=development and ENABLE_DEV_ROUTES=true
@@ -109,17 +125,59 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
+// Process error handling
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  console.error('Stack:', error.stack);
+  // Don't exit immediately, log the error and continue
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit immediately, log the error and continue
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('HTTP server closed');
+    db.close().then(() => {
+      console.log('Database connection closed');
+      process.exit(0);
+    });
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('HTTP server closed');
+    db.close().then(() => {
+      console.log('Database connection closed');
+      process.exit(0);
+    });
+  });
+});
+
 // Initialize database and start server
 db.initialize()
   .then(() => {
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Process ID: ${process.pid}`);
+      console.log(`Memory usage: ${JSON.stringify(process.memoryUsage())}`);
     });
   })
   .catch((error) => {
     console.error('Failed to initialize database:', error);
     process.exit(1);
   });
+
+// Memory monitoring (every 30 seconds)
+setInterval(() => {
+  const memUsage = process.memoryUsage();
+  console.log(`Memory usage - RSS: ${Math.round(memUsage.rss / 1024 / 1024)}MB, Heap Used: ${Math.round(memUsage.heapUsed / 1024 / 1024)}MB, Heap Total: ${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`);
+}, 30000);
 
 module.exports = { app, server, io };
